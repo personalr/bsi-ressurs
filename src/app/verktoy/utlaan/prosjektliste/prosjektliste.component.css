@@ -1,0 +1,27 @@
+mat-cell { font-size: 0.9em;  } 
+  
+  .highlight{
+
+    background: rgb(233, 243, 234); /* green */
+  }
+        
+  
+  
+  .highlight:hover{
+    background: rgb(163, 168, 163); /* green */
+    cursor: pointer;
+  }
+  
+  
+  .selected{
+
+    background: rgb(146, 173, 146); /* green */
+  }
+        
+  
+  
+  .selected:hover{
+    background: rgb(163, 168, 163); /* green */
+    cursor: pointer;
+  }
+  

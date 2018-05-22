@@ -1,0 +1,179 @@
+<div class="example-container mat-elevation-z8" *ngIf="objekt?.id">
+  <div style="padding: 30px">
+    <button mat-raised-button (click)="download()" style="min-width:20px">Last ned cv
+      <mat-icon>file_download</mat-icon>
+    </button>
+  </div>
+
+  <mat-accordion class="example-headers-align">
+    <mat-expansion-panel hideToggle="true" style="margin:20px" style="background-color:  rgb(254, 255, 254);">
+      <mat-expansion-panel-header style="background-color: rgb(233, 243, 234);margin:20px" class="mat-elevation-z8">
+        <mat-panel-title>
+          Personlige data
+        </mat-panel-title>
+        <mat-panel-description>
+          {{objekt?.fornavn}} {{objekt?.etternavn}}
+          <mat-icon>account_circle</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <form [formGroup]="testForm" (ngSubmit)="red()">
+        <input type="hidden" formControlName="id">
+        <input type="hidden" formControlName="cv_poster">
+        <input type="hidden" formControlName="image_id">
+        <table style="width:100%;" class="personalia">
+          <tr>
+            <td colspan="3" align="right">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <mat-form-field>
+                <input matInput placeholder="fornavn" type="text" formControlName="fornavn" autocomplete="off" [required]="true">
+              </mat-form-field>
+            </td>
+            <td>
+              <mat-form-field>
+                <input matInput placeholder="etternavn" type="text" formControlName="etternavn" autocomplete="off" [required]="true">
+              </mat-form-field>
+            </td>
+            <td>
+              <mat-form-field>
+                <input matInput placeholder="mail" type="text" formControlName="mail" autocomplete="off">
+              </mat-form-field>
+            </td>
+            <td rowspan="6">
+                
+                <app-image *ngIf="testForm.value.id!='ny'" [objekt]="objekt" (imageEndret)="bildeErLagtInn($event)"></app-image>
+
+                <!--
+              <app-image *ngIf="testForm.value.id!='ny'" [id]="objekt?.image_id" (nyImageId)="nyImageIdSattForKandidat($event)"></app-image>
+                -->
+            </td>
+          </tr>
+          <tr>
+            <tr>
+              <td>
+                <mat-form-field>
+                  <input matInput placeholder="adresse" type="text" formControlName="adresse" autocomplete="off">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <input matInput placeholder="postnummer" type="text" formControlName="postnummer" autocomplete="off">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <input matInput placeholder="poststed" type="text" formControlName="poststed" autocomplete="off">
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <mat-form-field>
+                  <input matInput placeholder="flyplass" type="text" formControlName="flyplass" autocomplete="off" [required]="true">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <input matInput placeholder="fodselsår" type="text" formControlName="fodselsaar" autocomplete="off" [required]="true">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <input matInput placeholder="telefon" type="text" formControlName="telefon" autocomplete="off">
+                </mat-form-field>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <mat-form-field>
+                  <input matInput placeholder="nasjonalitet" type="text" formControlName="nasjonalitet" autocomplete="off" [required]="true">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <input matInput placeholder="primærkompetanse" type="text" formControlName="primaerkompetanse" autocomplete="off"  [required]="true">
+                </mat-form-field>
+              </td>
+              <td>
+              
+                <mat-form-field>
+                  <input matInput placeholder="dawinci-kode" type="text" formControlName="dawinci" autocomplete="off"  [required]="true">
+                </mat-form-field>
+              
+              </td>
+            </tr>
+            <tr>
+              <td></td><td></td>
+              <td>
+                <button mat-raised-button type="submit" [disabled]="testForm.invalid" class="liten-knapp">
+                  <mat-icon>save</mat-icon>
+                </button>
+                <button mat-raised-button (click)="avbryt(form)" type="button" class="liten-knapp">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+                <button mat-raised-button (click)="slett(form)" type="button" class="liten-knapp" *ngIf="objekt?.id!='ny'">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+
+            </tr>
+        </table>
+      </form>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle="true">
+      <mat-expansion-panel-header style="background-color: #d9d9d9;margin:20px 50px 10px 50px" class="mat-elevation-z8">
+   
+        <mat-panel-title>
+          Utdanning
+          <span style="flex: 1 1 auto;"></span>
+          <mat-icon>school</mat-icon>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-utdanning [kandidat]="objekt" (objektEndret)="utdanningEndret($event)"></app-utdanning>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel hideToggle="true">
+      <mat-expansion-panel-header style="background-color: #b3e6ff;margin:10px 50px 10px 50px" class="mat-elevation-z8">       
+   
+        <mat-panel-title>
+          Kurs
+          <span style="flex: 1 1 auto;"></span>
+          <mat-icon>school</mat-icon>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-kurs [kandidat]="objekt" (objektEndret)="kursEndret($event)"></app-kurs>
+    </mat-expansion-panel>
+
+
+    <mat-expansion-panel hideToggle="true">
+        <mat-expansion-panel-header style="background-color: #b3c6ff;margin:10px 50px 10px 50px" class="mat-elevation-z8">
+   
+        <mat-panel-title>
+          Erfaring
+          <span style="flex: 1 1 auto;"></span>
+          <mat-icon>work</mat-icon>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-erfaring [kandidat]="objekt" (objektEndret)="kursEndret($event)"></app-erfaring>
+    </mat-expansion-panel>
+
+
+    <mat-expansion-panel hideToggle="true">
+      <mat-expansion-panel-header style="background-color:#b3b3ff ; margin:10px 50px 10px 50px" class="cvposter mat-elevation-z8">
+     
+      <mat-panel-title>
+         Attester
+          <span style="flex: 1 1 auto;"></span>
+          <mat-icon>insert_drive_file</mat-icon>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-attest [kandidat]="objekt" (objektEndret)="kursEndret($event)">
+    
+      </app-attest>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

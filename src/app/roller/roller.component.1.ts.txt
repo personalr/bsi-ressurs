@@ -1,0 +1,278 @@
+import { Observable } from 'rxjs/Observable';
+import { DataStorageService } from './../services/data-storage.service';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { DataSource } from '@angular/cdk/collections';
+import { NgForm, AbstractControl } from '@angular/forms';
+
+import { FormControl, FormGroupDirective, Validators } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+
+// Disse tre skal slettes når kontakt med database er i egen service
+import { Headers, Http, Response, RequestOptions } from '@angular/http';
+import { Injectable, EventEmitter } from '@angular/core';
+import { AuthService } from './../signin/auth.service';
+import { Lister } from '../services/lister';
+
+
+
+
+@Component({
+  selector: 'app-roller',
+  templateUrl: './roller.component.html',
+  styleUrls: ['./roller.component.css']
+})
+export class RollerComponent implements OnInit {
+
+
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('form') signupForm: NgForm;
+
+
+  private req = this.lister.reqstring + 'roller';
+  private feilmelding;
+
+  redigerObjekt: any;
+  // http og authService kan fjernes når service er på plass
+
+
+
+  constructor(// private ds: DataStorageService,
+    private http: Http,
+    private authService: AuthService,
+    private lister: Lister
+  ) { }
+
+  displayedColumns = ['navn'];
+  dataSource;
+
+
+  ngOnInit() {
+    this.authService.getToken();
+    this.getListe().subscribe(
+      (recipes: any[]) => {
+        //  console.log(recipes);
+        this.dataSource = new MatTableDataSource<any>(recipes);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+
+      }
+
+      ,
+      (error) => {
+        // this.feilmelding = error.code + ' ' + error.error;
+        //  alert(this.feilmelding + 'jeppppppppppppppp');
+       // alert(JSON.stringify(error.code) + 'jeppppppppppppppp');
+
+        if (JSON.stringify(error.code) === '401') {
+          // this.ngOnInit();
+        }
+
+
+      }
+
+
+    );
+
+
+
+
+
+}
+
+
+applyFilter(filterValue: string) {
+  filterValue = filterValue.trim(); // Remove whitespace
+  filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+  this.dataSource.filter = filterValue;
+}
+
+avbryt(form) {
+  let control: AbstractControl = null;
+  this.signupForm.reset();
+  this.signupForm.form.markAsUntouched();
+  Object.keys(this.signupForm.controls).forEach((name) => {
+    control = this.signupForm.controls[name];
+    control.setErrors(null);
+  });
+
+  this.redigerObjekt = null;
+
+}
+
+leggTilNy() {
+  this.redigerObjekt = JSON.parse('{"id":"ny","navn":""}');
+
+}
+
+slett(form) {
+  const r = confirm('Følgende rolle slettes: \nNavn: ' + form.value.navn);
+  if (r === true) {
+    this.slettRessurs(form.value.id).subscribe((response) => {
+      this.getListe().subscribe(
+        (recipes: any[]) => {
+          this.dataSource = new MatTableDataSource<any>(recipes);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+
+        }
+      );
+    },
+      (error) => {
+        this.feilmelding = error.code + ' ' + error.error;
+        alert(this.feilmelding);
+      }
+    );
+
+  } else {
+    //  txt = 'You pressed Cancel!';
+  }
+}
+
+
+aapneElement(e) {
+  this.redigerObjekt = e;
+}
+
+rediger(form) {
+  console.log(JSON.stringify(form.value));
+
+  if (form.value.id === 'ny') {
+    // console.log('id =  '+ form.value.id);
+    // console.log('Derfor skal vi oprette ny');
+    delete form.value.id;
+    // console.log(JSON.stringify(form.value));
+    this.newRessurs(form.value).subscribe((response) => {
+      this.getListe().subscribe(
+        (recipes: any[]) => {
+          this.dataSource = new MatTableDataSource<any>(recipes);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+
+        }
+      );
+    },
+      (error) => {
+        this.feilmelding = error.code + ' ' + error.error;
+        alert(this.feilmelding);
+      }
+    );
+
+  } else {
+    //console.log(JSON.stringify(form.value));
+
+    //console.log('id =  '+ form.value.id);
+    //console.log('Derfor skal vi IKKE oprette ny');
+    // alert(JSON.stringify(form.value));
+    this.setRessurs(form.value).subscribe((response) => {
+      /*
+              for (const entry of this.dataSource.data) {
+                if (entry.id === response.id) {
+                  for (const key in entry) {
+                    if (entry.hasOwnProperty(key)) {
+                      const element = entry[key] = response[key];
+                    }
+                  }
+                }
+              }
+              */
+      this.redigerObjekt = null;
+
+      this.getListe().subscribe(
+        (recipes: any[]) => {
+          this.dataSource = new MatTableDataSource<any>(recipes);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+
+        }
+      );
+
+
+
+
+
+    },
+      (error) => {
+        this.feilmelding = error.code + ' ' + error.error;
+        alert(this.feilmelding);
+      }
+    );
+  }
+}
+
+
+
+///////////// DATABASEKALL
+
+setRessurs(ressurs: any[]) {
+  // alert('oppdaterer');
+  const reqString = this.req + '/' + ressurs['id'];
+  return this.http.put(reqString, ressurs, this.authService.getOpts()).map(
+    (response: Response) => {
+      const data = response.json();
+      return data.data;
+    }
+  )
+    .catch(
+    (error: Response) => {
+      return Observable.throw(error.json());
+    }
+    );
+}
+
+newRessurs(obj: any[]) {
+  // alert('legger inn ny');
+  return this.http.post(this.req, obj, this.authService.getOpts()).map(
+    (response: Response) => {
+      const data = response.json();
+      return data.data;
+    }
+  )
+    .catch(
+    (error: Response) => {
+      return Observable.throw(error.json());
+    }
+    );
+}
+
+slettRessurs(id) {
+
+  const reqString = this.req + '/' + id;
+  // alert(reqString);
+  return this.http.delete(reqString,
+    this.authService.getOpts()).map(
+    (response: Response) => {
+      const data = response.json();
+      return data.data;
+    }
+    ).catch(
+    (error: Response) => {
+      console.log(error);
+      return Observable.throw(error.json());
+    }
+    );
+}
+
+getListe() {
+  return this.http.get(this.req, this.authService.getOpts())
+    .map(response => {
+      return response.json().data;
+    }).catch(
+    (error: Response) => {
+      console.log(error);
+
+       alert(error.json().code);
+       if (error.json().code === '401') {
+       return this.getListe();
+       }
+
+
+      return Observable.throw(error.json());
+    }
+    );
+}
+}
+
+

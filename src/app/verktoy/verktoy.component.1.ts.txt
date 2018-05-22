@@ -1,0 +1,311 @@
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTableDataSource, MatPaginator, MatSort, Sort, MatSortable } from '@angular/material';
+import { Component, OnInit, ViewChild, Output } from '@angular/core';
+import { NgForm, AbstractControl, FormControl, FormGroupDirective, Validators } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+
+import { Headers, Http, Response, RequestOptions } from '@angular/http';
+import { Injectable } from '@angular/core';
+import { AuthService } from './../signin/auth.service';
+import { Lister } from '../services/lister';
+
+import { DataSource } from '@angular/cdk/collections';
+
+
+@Component({
+  selector: 'app-verktoy',
+  templateUrl: './verktoy.component.html',
+  styleUrls: ['./verktoy.component.css'],
+})
+export class VerktoyComponent implements OnInit {
+
+//  @Output() open: EventEmitter<any> = new EventEmitter();
+
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('form') signupForm: NgForm;
+
+  redigerObjekt: any;
+
+  date = new Date();
+
+
+  constructor(// private ds: DataStorageService,
+    private http: Http,
+    private authService: AuthService,
+    private lister: Lister
+  ) { }
+
+
+  displayedColumns = ['navn', 'ressursnummer', 'verktoygruppe', 'tilgjengelig', 'reol', 'hylle', 'plass'];
+  dataSource; // = new MatTableDataSource<Element>;//(ELEMENT_DATA);
+
+
+
+
+
+  ngOnInit() {
+    this.authService.getToken();
+    this.getUsers().subscribe(
+      (rec: any[]) => {
+        this.dataSource = new MatTableDataSource<any>(rec);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      }
+    );
+
+  }
+  verktoyadministrasjon=true;
+  innlevering=false;
+  utlan= false;
+onOpen(event){
+console.log('TAB NAVN '+ event.tab.textLabel);
+switch (event.tab.textLabel) {
+  case 'Verktøyadministrasjon': {
+    this.innlevering=false;
+    this.utlan= false;
+    this.verktoyadministrasjon=true;//(new Date(this.aar, this.maaned - 1, 1));
+    break;
+  }
+  case 'Innlevering': {
+    this.verktoyadministrasjon=false;
+    this.utlan= false;
+    this.innlevering=true;//(new Date(this.aar, this.maaned + 1, 1));
+    break;
+  }
+  case 'Utlån': {
+    this.verktoyadministrasjon=false;
+    this.innlevering=false;
+    this.utlan= true;
+    break;
+  }
+
+  default: {
+    this.verktoyadministrasjon=true;
+    this.innlevering=false;
+    this.utlan= false;
+    break;
+  }
+}
+
+ //  console.log('event => ', event);
+  //  console.log('index => ', event.index);
+  //  console.log('tab => ', event.tab);
+  
+   // this.router.navigate(['contacts']); 
+  }
+
+
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
+    this.dataSource.sort.sort(<MatSortable>{ id: 'ressursnummer', start: 'desc' });
+  }
+
+
+
+
+  apply(e) {
+
+    e = e.value.trim(); // Remove whitespace
+    e = e.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = e;
+    this.dataSource.sort.sort(<Sort>{ active: 'ressursnummer', direction: 'desc' });
+    this.dataSource.sort.sort(<MatSortable>{ id: 'ressursnummer', start: 'desc' });
+  }
+
+  // tslint:disable-next-line:member-ordering
+  public verktoKategoriValgt: boolean;
+  // tslint:disable-next-line:member-ordering
+  public verktoykategori: string;
+
+  velgVerktoykategori(e) {
+    this.verktoykategori = e.value;
+
+    e = e.value.trim(); // Remove whitespace
+    e = e.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = e;
+    this.dataSource.sort.sort(<Sort>{ active: 'ressursnummer', direction: 'desc' });
+    this.dataSource.sort.sort(<MatSortable>{ id: 'ressursnummer', start: 'desc' });
+    this.verktoKategoriValgt = true;
+  }
+
+
+
+  avbryt() {
+    /*
+    let control: AbstractControl = null;
+    this.signupForm.reset();
+    this.signupForm.form.markAsUntouched();
+    Object.keys(this.signupForm.controls).forEach((name) => {
+      control = this.signupForm.controls[name];
+      control.setErrors(null);
+    });
+    */
+    this.redigerObjekt = null;
+   // this.applyFilter(null);
+
+  }
+
+
+
+
+  leggTilNy() {
+    this.redigerObjekt = JSON.parse('{"id":"ny","navn":"","x_0":"' + this.verktoykategori + '"}');
+
+    // alert(JSON.stringify(this.redigerObjekt));
+    this.date = new Date();
+  }
+
+  slett(form) {
+    const filteret = this.dataSource.filter;
+    const r = confirm('Følgende verktøy slettes: \nNavn: ' + form.value.navn);
+    if (r === true) {
+      this.slettRessurs(form.value.id).subscribe((response) => {
+        this.getUsers().subscribe(
+          (recipes: any[]) => {
+            this.dataSource = new MatTableDataSource<any>(recipes);
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+            this.dataSource.filter = filteret;
+            this.avbryt();
+          }
+        );
+      },
+        (error) => {
+          this.feilmelding = error.code + ' ' + error.error;
+          alert(this.feilmelding);
+        }
+      );
+
+    } else {
+    }
+  }
+
+
+
+  aapneElement(e) {
+    console.log(JSON.stringify(e));
+    this.redigerObjekt = e;
+    this.date = new Date(e.innkjopsdato);
+  }
+
+
+  rediger(form) {
+    let filteret = this.dataSource.filter;
+
+// alert(JSON.stringify(form.value));
+
+
+    if (form.value.id === 'ny') {
+      delete form.value.id;
+      this.newRessurs(form.value).subscribe((response) => {
+        this.getUsers().subscribe(
+          (recipes: any[]) => {
+            this.dataSource = new MatTableDataSource<any>(recipes);
+            this.dataSource.filter = filteret;
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+            this.avbryt();
+          }
+        );
+
+      },
+        (error) => {
+          this.feilmelding = error.code + ' ' + error.error;
+          alert(this.feilmelding);
+        }
+      );
+
+    } else {
+
+      this.setRessurs(form.value).subscribe((response) => {
+
+        this.getUsers().subscribe(
+          (recipes: any[]) => {
+            this.dataSource = new MatTableDataSource<any>(recipes);
+            this.dataSource.filter = filteret;
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+            this.avbryt();
+          }
+        );
+
+      },
+        (error) => {
+          this.feilmelding = error.code + ' ' + error.error;
+          alert(error.code);
+          alert(this.feilmelding);
+        }
+      );
+    }
+  }
+
+
+
+  ///////////// DATABASEKALL
+
+  private req = this.lister.reqstring + 'verktoy';
+  private feilmelding;
+
+  setRessurs(ressurs: any[]) {
+    const reqString = this.req + '/' + ressurs['id'];
+    return this.http.put(reqString, ressurs, this.authService.getOpts()).map(
+      (response: Response) => {
+        const data = response.json();
+        return data.data;
+      }
+    )
+      .catch(
+      (error: Response) => {
+        return Observable.throw(error.json());
+      }
+      );
+  }
+
+  newRessurs(obj: any[]) {
+    return this.http.post(this.req, obj, this.authService.getOpts()).map(
+      (response: Response) => {
+        const data = response.json();
+        return data.data;
+      }
+    )
+      .catch(
+      (error: Response) => {
+        return Observable.throw(error.json());
+      }
+      );
+  }
+
+  slettRessurs(id) {
+    const reqString = this.req + '/' + id;
+    return this.http.delete(reqString,
+      this.authService.getOpts()).map(
+      (response: Response) => {
+        const data = response.json();
+        return data.data;
+      }
+      ).catch(
+      (error: Response) => {
+        console.log(error);
+        return Observable.throw(error.json());
+      }
+      );
+  }
+
+  getUsers() {
+    return this.http.get(this.req, this.authService.getOpts())
+      .map(response => {
+        return response.json().data;
+      }).catch(
+      (error: Response) => {
+        console.log(error);
+        return Observable.throw(error.json());
+      }
+      );
+  }
+
+}

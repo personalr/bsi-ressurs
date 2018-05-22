@@ -1,0 +1,207 @@
+import { FormGroup } from '@angular/forms';
+// tslint:disable:comment-format
+// tslint:disable:member-ordering
+// tslint:disable:max-line-length
+
+import { ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, SimpleChanges } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Observable } from 'rxjs/Observable';
+import { AbstractControl } from '@angular/forms';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { Headers, Http, Response, RequestOptions } from '@angular/http';
+import { Injectable, EventEmitter } from '@angular/core';
+import { AuthService } from './../../../signin/auth.service';
+import { Lister } from '../../../services/lister';
+import { OnChanges } from '@angular/core/src/metadata/lifecycle_hooks';
+import { NgForm } from '@angular/forms';
+import { FormControl } from '@angular/forms';
+
+@Component({
+  selector: 'app-image',
+  templateUrl: './image.component.html',
+  styleUrls: ['./image.component.css']
+})
+export class ImageComponent implements OnInit, OnChanges {
+  @Input() id: string;
+  @Output() nyImageId: EventEmitter<any> = new EventEmitter();
+
+  // @Output() endretBilde: EventEmitter<any> = new EventEmitter();
+
+
+
+  private readonly imageType: string = 'data:image/JPG;base64,';
+
+  tekst;
+  imagedata: any;
+  image: any;
+  height: any;
+  width: any;
+
+  constructor(
+    private http: Http,
+    private authService: AuthService,
+    private lister: Lister,
+    public sanitizer: DomSanitizer
+  ) { }
+
+  ngOnInit() { }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.id !== 'ny') {
+      this.tekst = 'photo_library';
+      this.getImg(this.id)
+        .subscribe((data) => {
+          this.image = this.sanitizer.bypassSecurityTrustUrl(this.imageType + data.image);
+        },
+        (error) => {
+        }
+        );
+    } else {
+      this.image = '';
+      this.tekst = 'add_a_photo';
+    }
+  }
+
+
+
+
+
+  slett(form) {
+    const r = confirm('Slette bilde?');
+    if (r === true) {
+      this.slettImageRessurs(this.id).subscribe((response) => {
+        this.nyImageId.emit('ny');
+        // this.endretBilde.emit('ny');
+      },
+        (error) => {
+          alert(error.code + ' ' + error.error);
+        }
+      );
+
+    } else {
+      //  txt = 'You pressed Cancel!';
+    }
+  }
+
+
+  onFileChange(event) {
+    //  console.log('onFileChange IMAGE??????????!!!!!!!!');
+    const reader = new FileReader();
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const r = confirm('Vil du endre bildet?');
+        if (r === true) {
+          this.imagedata = reader.result.split(',')[1];
+          this.image = this.sanitizer.bypassSecurityTrustUrl(this.imageType + this.imagedata);
+          this.id = 'midlertidig';
+          this.red();
+        } else {
+        }
+      };
+    }
+  
+  }
+
+
+
+
+
+  
+
+  getImg(id) {
+    return this.http.get(this.lister.reqstring + 'images/' + id, this.authService.getOpts())
+      .map(response => {
+        return response.json().data;
+      }).catch(
+      (error: Response) => {
+        console.log(error);
+        return Observable.throw('');
+      }
+      );
+  }
+
+
+  red() {
+    const myImage = 'data:image/jpeg;base64,' + this.imagedata;
+    const im = new Image;
+    im.src = myImage; // 'data:image/png;base64,whatever';
+    im.onload = () => {
+      console.log(im.width + ' * ' + im.height);
+      const obj: any = {
+        id: this.id,
+        image: this.imagedata,
+        width: im.width,
+        height: im.height,
+      };
+
+    //  console.log(JSON.stringify(obj));
+
+      if (this.id === 'midlertidig') {
+        this.newImgRessurs(obj).subscribe((res) => {
+          this.nyImageId.emit(res.id);
+        }, (error) => {
+          alert(error.code + ' ' + error.error);
+        }
+        );
+      } else {
+        this.setImageRessurs(obj).subscribe((response) => {
+        }, (error) => { alert(error.code + ' ' + error.error); });
+      }
+    }
+  }
+
+
+
+  newImgRessurs(obj: any[]) {
+    if (obj['id']) {
+      delete obj['id'];
+    }
+    return this.http.post(this.lister.reqstring + 'images', obj, this.authService.getOpts()).map(
+      (response: Response) => {
+        const data = response.json();
+        return data.data;
+      }
+    )
+      .catch(
+      (error: Response) => {
+        return Observable.throw(error.json());
+      }
+      );
+  }
+
+  setImageRessurs(ressurs: any[]) {
+    return this.http.put(this.lister.reqstring + 'images/' + ressurs['id'], ressurs, this.authService.getOpts()).map(
+      (response: Response) => {
+        const data = response.json();
+        return data.data;
+      }
+    )
+      .catch(
+      (error: Response) => {
+        return Observable.throw(error.json());
+      }
+      );
+  }
+
+
+  slettImageRessurs(id) {
+    const reqString = this.lister.reqstring + 'images/' + id;
+    return this.http.delete(reqString,
+      this.authService.getOpts()).map(
+      (response: Response) => {
+        const data = response.json();
+        return data.data;
+      }
+      ).catch(
+      (error: Response) => {
+        console.log(error);
+        return Observable.throw(error.json());
+      }
+      );
+  }
+
+
+}

@@ -1,0 +1,80 @@
+<div class="example-header">
+  <mat-form-field>
+    <mat-select placeholder="Velg verktøygruppe" (change)="velgVerktoykategori($event)">
+      <mat-option *ngFor="let option of lister.verktoyGrupper" [value]="option.display">
+        {{option.display}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<mat-table #table [dataSource]="dataSource" matSort>
+  <ng-container matColumnDef="navn">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Navn </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element?.navn}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="ressursnummer">
+    <mat-header-cell class="cellevidde_idnr_header" *matHeaderCellDef mat-sort-header> Id&#46;nr </mat-header-cell>
+    <mat-cell class="cellevidde_idnr"  *matCellDef="let element"> {{element?.ressursnummer}} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="verktoygruppe">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Verktøygruppe </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element?.x_0}} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="tilgjengelig">
+    <mat-header-cell [ngClass]="'status'" *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+    <mat-cell [ngClass]="'status'" *matCellDef="let element"> {{element?.tilgjengelig}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="reol">
+    <mat-header-cell [ngClass]="'plassering'" *matHeaderCellDef mat-sort-header>
+      <table class="plassering">
+        <tr>
+          <td>
+            Reol
+          </td>
+          <td>
+            Hylle
+          </td>
+          <td>
+            Plass
+          </td>
+        </tr>
+      </table>
+    </mat-header-cell>
+    <mat-cell [ngClass]="'plassering'" *matCellDef="let element">
+        <table class="plassering">
+        <tr>
+          <td>
+            {{element?.x_2}}
+          </td>
+          <td>{{element?.x_3}}
+
+          </td>
+          <td>
+            {{element?.x_4}}
+          </td>
+        </tr>
+
+      </table>
+
+
+    </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="velg">
+    <mat-header-cell *matHeaderCellDef mat-sort-header class="cellevidde_knapp_header"></mat-header-cell>
+    <mat-cell *matCellDef="let element" class="cellevidde_knapp">
+      <div class="button-div" *ngIf="element?.tilgjengelig==='ledig'">
+        <button mat-raised-button (click)="lei(element)" type="button" class="liten-knapp">
+          <mat-icon> arrow_forward</mat-icon>
+        </button>
+      </div>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="'highlight'" (click)=verktoyValgt(row)></mat-row>
+</mat-table>
+<mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 100]">
+</mat-paginator>

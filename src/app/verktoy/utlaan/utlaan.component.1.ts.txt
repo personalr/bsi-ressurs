@@ -1,0 +1,252 @@
+import { Lister } from './../../services/lister';
+
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTableDataSource, MatPaginator, MatSort, Sort, MatSortable } from '@angular/material';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm, AbstractControl, FormControl, FormGroupDirective, Validators } from '@angular/forms';
+
+import { Observable } from 'rxjs/Observable';
+
+// Disse tre skal slettes når kontakt med database er i egen service
+import { Headers, Http, Response, RequestOptions } from '@angular/http';
+import { Injectable, EventEmitter } from '@angular/core';
+
+import { AuthService } from './../../signin/auth.service';
+import { DataSource } from '@angular/cdk/collections';
+
+@Component({
+  selector: 'app-utlaan',
+  templateUrl: './utlaan.component.html',
+  styleUrls: ['./utlaan.component.css']
+})
+export class UtlaanComponent implements OnInit {
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('form') signupForm: NgForm;
+
+  displayedColumns = ['navn', 'ressursnummer', 'verktoygruppe', 'tilgjengelig', 'reol', 'hylle', 'plass', 'velg'];
+  displayedColumnsPlukk = ['velg', 'navn', 'ressursnummer', 'verktoygruppe', 'tilgjengelig', 'reol', 'hylle', 'plass'];
+
+  dataSource; // = new MatTableDataSource<Element>;//(ELEMENT_DATA);
+  dataSourcePlukk = new MatTableDataSource<any>([]);
+
+
+  date = new Date();
+
+  public verktoKategoriValgt: boolean;
+  public verktoykategori: string;
+
+  // http og authService kan fjernes når service er på plass
+  constructor(// private ds: DataStorageService,
+    private http: Http,
+    private lister: Lister,
+    private authService: AuthService,
+
+  ) { }
+
+  ngOnInit() {
+    this.getListe().subscribe(
+      (rec: any[]) => {
+        this.dataSource = new MatTableDataSource<any>(rec);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      }
+    );
+  }
+
+
+
+  avbryt(utlevertAvCtrl, utlevertTilCtrl, prosjektnummerCtrl, prosjektnavnCtrl) {
+    const filteret = this.dataSource.filter;
+    utlevertAvCtrl.control.markAsPristine();
+    utlevertAvCtrl.control.markAsUntouched();
+    utlevertAvCtrl.reset();
+    utlevertTilCtrl.control.markAsPristine();
+    utlevertTilCtrl.control.markAsUntouched();
+    utlevertTilCtrl.reset();
+    prosjektnummerCtrl.control.markAsPristine();
+    prosjektnummerCtrl.control.markAsUntouched();
+    prosjektnummerCtrl.reset();
+    prosjektnavnCtrl.control.markAsPristine();
+    prosjektnavnCtrl.control.markAsUntouched();
+    prosjektnavnCtrl.reset();
+    this.date = new Date();
+
+    this.dataSourcePlukk = new MatTableDataSource<any>([]);
+
+    this.getListe().subscribe(
+      (rec: any[]) => {
+        this.dataSource = new MatTableDataSource<any>(rec);
+        this.dataSource.filter = filteret;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      }
+    );
+
+  }
+
+  ledig(inn) {
+    if (inn === 'ledig') {
+      return 'highlight';
+    } else {
+      return 'utleid';
+    }
+  }
+
+
+  // tslint:disable-next-line:member-ordering
+  filter;
+
+  lei(row) {
+    const filteret = this.dataSource.filter;
+    this.dataSource.data.splice(this.dataSource.data.indexOf(row), 1);
+    this.dataSource = new MatTableDataSource<any>(this.dataSource.data);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.dataSourcePlukk.data.push(row);
+    this.dataSourcePlukk = new MatTableDataSource<any>(this.dataSourcePlukk.data);
+    this.dataSource.filter = filteret;
+    this.dataSource.sort.sort(<Sort>{ active: 'ressursnummer', direction: 'desc' });
+    this.dataSource.sort.sort(<MatSortable>{ id: 'ressursnummer', start: 'desc' });
+    this.verktoKategoriValgt = true;
+  }
+
+
+
+  leggTilbake(e) {
+    const filteret = this.dataSource.filter;
+    this.dataSourcePlukk.data.splice(this.dataSourcePlukk.data.indexOf(e), 1);
+    this.dataSourcePlukk = new MatTableDataSource<any>(this.dataSourcePlukk.data);
+
+    this.dataSource.data.push(e);
+    this.dataSource = new MatTableDataSource<any>(this.dataSource.data);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.dataSource.filter = filteret;
+    this.dataSource.sort.sort(<Sort>{ active: 'ressursnummer', direction: 'desc' });
+    this.dataSource.sort.sort(<MatSortable>{ id: 'ressursnummer', start: 'desc' });
+    this.verktoKategoriValgt = true;
+  }
+
+
+
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = filterValue;
+    this.dataSource.sort.sort(<MatSortable>{ id: 'ressursnummer', start: 'desc' });
+  }
+
+
+  velgVerktoykategori(e) {
+    this.verktoykategori = e.value;
+
+    e = e.value.trim(); // Remove whitespace
+    e = e.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = e;
+    this.dataSource.sort.sort(<Sort>{ active: 'ressursnummer', direction: 'desc' });
+    this.dataSource.sort.sort(<MatSortable>{ id: 'ressursnummer', start: 'desc' });
+    this.verktoKategoriValgt = true;
+  }
+
+
+  utlevertAv; // = 'Pølsemakeren';
+  utlevertTil;
+  prosjektnummer; // = 'Pølsemakeren';
+  prosjektnavn;
+  feilmelding;
+  lagret;
+
+  //
+  red;
+
+  
+  //skrivUtDialog() {
+    //this.lister.skrivUtPlukkliste(this.red);
+  //}
+
+
+  lagre() {
+
+    const obj: any = {
+      utlevert_til: this.utlevertTil,
+      utlevert_av: this.utlevertAv,
+      prosjektnavn: this.prosjektnavn,
+      fra_dato: this.date.getFullYear() + '-' + (this.date.getMonth() + 1) + '-' + this.date.getDate(),
+      prosjekt_id: this.prosjektnummer,
+      utleieliste: this.dataSourcePlukk.data
+    };
+    // console.log('------------------------------------------------>' + JSON.stringify(obj));
+
+    this.lagrePlukkliste(obj).subscribe((response) => {
+      // console.log(response);
+
+      this.dataSourcePlukk = new MatTableDataSource<any>(response.verktoy);
+      this.red = response;
+      this.lagret = true;
+
+
+
+      this.date = new Date();
+      
+          this.dataSourcePlukk = new MatTableDataSource<any>([]);
+      
+
+      this.utlevertTil=null;//
+      this.utlevertAv=null;//
+      this.prosjektnavn=null;//
+     // this.date=null;//.getFullYear() + '-' + (this.date.getMonth() + 1) + '-' + this.date.getDate(),
+      this.prosjektnummer=null;//
+    //  this.dataSourcePlukk.data=null;//
+
+
+    },
+      (error) => {
+        this.feilmelding = error.code + ' ' + error.error;
+        alert(error.code + ' ' + error.error);
+        alert(JSON.stringify(this.feilmelding.data));
+      }
+    );
+
+  }
+
+
+  // DATABASE
+
+
+  private req = this.lister.reqstring + 'verktoy';
+  
+
+  getListe() {
+    return this.http.get(this.req, this.authService.getOpts())
+      .map(response => {
+        return response.json().data;
+      }).catch(
+      (error: Response) => {
+        console.log(error);
+        return Observable.throw(error.json());
+      }
+      );
+  }
+
+
+
+  lagrePlukkliste(obj: any[]) {
+   // return this.http.post(this.lister.reqstring + 'plukklister_TEST', obj, this.authService.getOpts()).map(
+    return this.http.post(this.lister.reqstring + 'plukklister', obj, this.authService.getOpts()).map(
+      
+   (response: Response) => {
+        const data = response.json();
+        return data.data;
+      }
+    )
+      .catch(
+      (error: Response) => {
+        return Observable.throw(error.json());
+      }
+      );
+
+  }
+
+}

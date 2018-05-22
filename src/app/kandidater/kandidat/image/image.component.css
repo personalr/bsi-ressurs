@@ -1,0 +1,184 @@
+.uploadFile{
+    width:100%;
+    height: auto;
+    margin-top: 10px;
+  }
+  #uploadBtn{
+    display: none;
+  }
+  
+  .uploadBtnLabel{
+
+    width: auto;
+    height: auto;
+    padding: 10px  15px;
+    /*background: #202020;*/
+    background: #747272;
+    
+    border: 2px solid #747272;
+    color: #fff;
+    transition: 0.50s;
+    
+  }
+  .uploadBtnLabel:hover{
+    background: none;
+    color: #202020;
+    transition: 0.50s;
+    cursor: pointer;
+  }
+  
+ 
+  
+  
+  td{
+  /*  border: solid cyan; */
+   
+  }
+  
+  
+  
+  mat-form-field{
+    width:90% !important;
+  }
+  
+  .liten-knapp{
+      min-height: 20px !important;
+      min-width: 30px !important;
+      font-size: 7px !important;
+      line-height: 6px; 
+    }
+    
+    
+    
+    .example-headers-align .mat-expansion-panel-header-title, 
+    .example-headers-align .mat-expansion-panel-header-description {
+      flex-basis: 0;
+  
+    }
+    
+    .example-headers-align .mat-expansion-panel-header-description {
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    
+    
+    
+    
+    
+    
+    /* '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' ' */
+    .cvposter  {
+      
+      background-color: rgb(188, 188, 247);
+      border:solid white 1px;
+    
+    }
+    
+    
+    .cvposter:hover  {
+      
+    cursor: pointer;
+    }
+    
+    
+    
+    mat-grid-tile {
+      
+       padding: 0px;
+    
+    }
+    
+    mat-form-field{
+      padding: 4px;
+    
+      
+    }
+    
+    .example-form {
+    /*  min-width: 150px;
+      max-width: 500px;
+      */
+      width: 100%;
+      
+    }
+    
+  
+    
+    
+    
+    
+    /* Structure */
+    .example-container {
+        display: flex;
+        flex-direction: column;
+        min-width: 300px;
+      }
+      
+      .example-header {
+        min-height: 64px;
+        padding: 8px 24px 0;
+      }
+      
+      .mat-form-field {
+        font-size: 14px;
+        width: 100%;
+      }
+      
+      .mat-table {
+        overflow: auto;
+        max-height: 500px;
+      }
+      
+    
+      .example-card {
+      /*  width: 600px;*/
+      }
+      
+      .container{
+        display: flex;
+        width: 100%;
+      }
+      .left{
+        width: 65%;
+      }
+    
+      .right{
+        width: 35%;
+      }
+    
+    
+      .highlight{
+        background: rgb(233, 243, 234); /* green */
+      }
+    
+      .highlight:hover{
+        background: rgb(163, 168, 163); /* green */
+        cursor: pointer;
+      }
+      
+    
+      .example-container2 {
+        display: flex;
+        flex-direction: column;
+        padding:10%;
+    
+      }
+      
+      .example-container2 > * {
+        width: 100%;
+      }
+    
+      .button-div {
+        display: flex;
+      }
+    
+      
+      .button-div button{
+        margin: 3%;
+      }
+     
+    
+      .align_to_right{
+        flex: 1 1 auto;
+    }

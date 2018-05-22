@@ -1,0 +1,78 @@
+<div class="container">
+  <mat-card class="example-card left">
+    <mat-card-header>
+      <span class="align_to_right"></span>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="container1 mat-elevation-z8" *ngIf="redigerObjekt?.id">
+        <input type="hidden" id="id" name="id" [ngModel]="redigerObjekt?.id">
+        <div class="example-container2">
+          <mat-form-field>
+            <input matInput disabled placeholder="Navn" type="text" id="navn" name="navn" [ngModel]="redigerObjekt?.navn" #nameCtrl="ngModel"
+              autocomplete="off">
+          </mat-form-field>
+
+
+          <mat-form-field>
+            <mat-select placeholder="Rengjort" [ngModel]="redigerObjekt?.rengjort" name="rengjort" id="rengjort" #rengjortCtrl>
+              <mat-option *ngFor="let option of lister.rengjort" [value]="option.display">
+                {{option.display}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+
+          <div class="button-div">
+            <button mat-raised-button (click)="lagre(rengjortCtrl)">
+              <mat-icon>save</mat-icon>
+              <div>Lagre</div>
+            </button>
+            <button mat-raised-button (click)="avbryt(rengjortCtrl,nameCtrl)" type="button">
+              <mat-icon>cancel</mat-icon>
+              <div>Avbryt</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+  <mat-card class="example-card right">
+    <mat-card-header>
+      <mat-card-title>BRAKKER</mat-card-title>
+      <mat-card-subtitle>Oversikt over brakkerr</mat-card-subtitle>
+      <span class="align_to_right"></span>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="container1 mat-elevation-z8">
+        <div class="example-header">
+          <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+          </mat-form-field>
+        </div>
+
+        <mat-table #table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="navn">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Navn </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.navn}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="rengjort">
+            <mat-header-cell [ngClass]="'id'" *matHeaderCellDef mat-sort-header> Rengjort </mat-header-cell>
+            <mat-cell [ngClass]="'id'" *matCellDef="let element"> {{element?.rengjort}} </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="highlight" (click)=aapneElement(row)>
+
+          </mat-row>
+
+        </mat-table>
+
+        <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 100]">
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

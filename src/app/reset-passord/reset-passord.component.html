@@ -1,0 +1,30 @@
+<form (ngSubmit)="onSignin(f)" #f="ngForm">
+  <p>
+    <mat-card class="card-style">
+        <mat-card-header>
+            <mat-card-title>Velkommen som ny bruker</mat-card-title>
+            <mat-card-subtitle>Aller først må du endre passordet ditt:</mat-card-subtitle>
+          </mat-card-header>
+
+      <mat-card-content class="card-content-style">
+        <div align="center">
+          <mat-input-container>
+            <input matInput placeholder="nytt passord" id="password" name="password" ngModel type="password">
+          </mat-input-container>
+        </div>
+        <div align="center">
+          <mat-input-container>
+            <input matInput placeholder="gjenta passord" id="password_r" name="password_r" ngModel type="password">
+          </mat-input-container>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <div align="center">
+          <button mat-button type="submit" [disabled]="!f.valid">
+            <mat-icon>check</mat-icon>Endre passord</button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </p>
+</form>
+

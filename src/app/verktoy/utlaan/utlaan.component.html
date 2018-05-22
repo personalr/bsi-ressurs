@@ -1,0 +1,155 @@
+<!--
+<ol>
+  <li>
+    Når man redigerer et prosjekt er det ikke nødvendig med lagreknapp
+  </li>
+  <li>
+      Fargen på listen til verktøy må være make til den som markert prosjekt er.
+  </li>
+  <li>
+      Fargen på på markert verktøy må være make til verktøydetaljfargen.
+  </li>
+</ol>
+-->
+
+<div class="container">
+  <mat-card class="mat-elevation-z8 leftfar">
+    <mat-card-header>
+      <mat-card-title>
+        VERKTØY PÅ LAGER
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <app-lager [lagerliste]="lagerliste" (verktoyEndret)="settVerktoy($event)" (verktoyUtFraLager)="leggInnVerktoyPaaProsjekt($event)"></app-lager>
+    </mat-card-content>
+  </mat-card>
+
+
+  <mat-card class="mat-elevation-z8 left anim">
+    <mat-card-header>
+      <table style="width:90%" *ngIf="prosjekt?.id !='ny' && !redigerProsjekt" class="anim">
+        <tr class="anim">
+          <td style="width:100%"> PROSJEKT
+            <span *ngIf="prosjekt">: {{prosjekt?.prosjektnavn}}</span>
+          </td>
+        </tr>
+        <tr class="anim">
+          <td style="width:100%"> PROSJEKTNUMMER
+            <span *ngIf="prosjekt">: {{prosjekt?.prosjekt_id}}</span>
+          </td>
+          <td>
+            <button mat-raised-button (click)="nyttProsjekt()" class="liten-knapp" matTooltip="Nytt prosjekt">
+              <mat-icon>create_new_folder</mat-icon>
+            </button>
+          </td>
+
+          <td *ngIf="prosjekt">
+            <button mat-raised-button (click)="onRedigerProsjekt()" class="liten-knapp" matTooltip="Rediger prosjektnavn og prosjektnummer">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+
+          <td *ngIf="prosjekt">
+            <button mat-raised-button (click)="slettProsjekt()" class="liten-knapp" matTooltip="Slett prosjektet">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+
+        </tr>
+      </table>
+      <table *ngIf="prosjekt?.id =='ny'" class="anim" style="width:90%">
+        <tr>
+          <td>NYTT PROSJEKT:</td>
+        </tr>
+        <tr>
+          <td>
+            <mat-form-field>
+              <input matInput placeholder="Prosjektnavn" type="text" id="prosjektnavn" [ngModel]="prosjekt?.prosjektnavn" #prosjektnavnCtrl
+                autocomplete="off">
+            </mat-form-field>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="width:100%">
+            <mat-form-field>
+              <input matInput placeholder="Prosjektnummer" type="text" id="prosjektnummer" [ngModel]="prosjekt?.prosjektnummer" #prosjektnummerCtrl
+                autocomplete="off">
+            </mat-form-field>
+          </td>
+          <td>
+            <button mat-raised-button (click)="lagreNyttProsjekt(prosjektnavnCtrl.value,prosjektnummerCtrl.value)" class="liten-knapp"
+              matTooltip="Lagre det nye prosjektet">
+              <mat-icon>save</mat-icon>
+            </button>
+          </td>
+          <td>
+            <button mat-raised-button (click)="avbrytNyttProsjekt()" class="liten-knapp" matTooltip="Avbryt innlegging av nytt prosjekt">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+      <table *ngIf="redigerProsjekt" class="anim" style="width:90%">
+        <tr>
+          <td>Rediger PROSJEKT:</td>
+        </tr>
+        <tr>
+          <td>
+            <mat-form-field>
+              <input matInput placeholder="Prosjektnavn" type="text" id="prosjektnavn" [ngModel]="prosjekt?.prosjektnavn" #prosjektnavnCtrl
+                autocomplete="off">
+            </mat-form-field>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="width:100%">
+            <mat-form-field>
+              <input matInput placeholder="Prosjektnummer" type="text" id="prosjektnummer" [ngModel]="prosjekt?.prosjekt_id" #prosjektnummerCtrl
+                autocomplete="off">
+            </mat-form-field>
+          </td>
+          <td>
+            <button mat-raised-button (click)="saveProsjekt(prosjektnavnCtrl.value,prosjektnummerCtrl.value)" class="liten-knapp" matTooltip="Lagre endringene på prosjektets navn og nummer">
+              <mat-icon>save</mat-icon>
+            </button>
+          </td>
+          <td>
+            <button mat-raised-button (click)="avbrytRedigerProsjekt()" class="liten-knapp" matTooltip="Avbryt innlegging av nytt prosjekt">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </mat-card-header>
+    <mat-card-content *ngIf="prosjekt">
+      <app-prosjekt [objekt]="prosjekt" (verktoyEndret)="settVerktoy($event)" (tilLager)="leverTilLager($event)"></app-prosjekt>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="mat-elevation-z8 right">
+    <mat-card-header>
+      <mat-card-title>
+        PROSJEKTER
+
+
+
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <app-prosjektliste [prosjektliste]="prosjektliste" [prosjekt]="prosjekt" (prosjektEndret)="settProsjekt($event)"></app-prosjektliste>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="mat-elevation-z8 rightfar">
+    <mat-card-header>
+      <mat-card-title>
+        VERKTØYDETALJ
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <app-verktoydetaljer [objekt]="verktoy"></app-verktoydetaljer>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,105 @@
+/*
+mat-cell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } 
+
+mat-cell { white-space: nowrap; overflow: initial;  } 
+
+*/
+
+
+mat-cell { font-size: 0.9em;  } 
+
+
+
+
+
+.dato{
+  flex: 0 0 120px;
+/*  border: solid rgb(236, 2x33, 37);*/
+}
+
+.status{
+    flex: 0 0 80px;
+  /*  border: solid rgb(236, 233, 37);*/
+ }
+
+ .id{
+    flex: 0 0 50px;
+  /*  border: solid rgb(62, 21, 109);*/
+ }
+
+ .plassering{
+    flex: 0 0 40px;
+    text-align: center;
+  /*  border: solid red;*/
+ }
+
+.container{
+    display: flex;
+    width: 100%;
+  }
+
+  .left{
+    width: 50%;
+  }
+
+  .right{
+    width: 50%;
+  }
+
+.liten-knapp{
+  min-height: 30px !important;
+  min-width: 46px !important;
+  font-size: 10px !important;
+  line-height: 10px; 
+}
+
+.example-card {
+    /*  width: 600px;*/
+}
+    
+
+.align_to_right{
+  flex: 1 1 auto;
+}
+
+.container1 {
+        display: flex;
+        flex-direction: column;
+        min-width: 300px;
+      }
+
+
+
+      .example-header {
+        min-height: 64px;
+        padding: 8px 24px 0;
+      }
+
+
+
+      .example-container2 {
+        display: flex;
+        flex-direction: column;
+        padding:10%;
+    
+      }
+
+
+
+      .highlight{
+        background: rgb(233, 243, 234); /* green */
+      }
+
+      
+      .utleid{
+        background: rgb(238, 165, 116); /* green */
+      }
+
+
+
+      .highlight:hover{
+        background: rgb(163, 168, 163); /* green */
+        cursor: pointer;
+      }
+
+

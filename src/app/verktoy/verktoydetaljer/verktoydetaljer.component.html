@@ -1,0 +1,76 @@
+<table style="width:100%;">
+  <tr>
+    <td>
+      <mat-form-field>
+        <input matInput placeholder="Navn" type="text" id="navn" name="navn" [ngModel]="objekt?.navn" autocomplete="off" required
+          #nameCtrl="ngModel" autocomplete="off" (blur)="onBlur('navn',nameCtrl)">
+      </mat-form-field>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <mat-form-field>
+        <input matInput placeholder="Id-nummer" type="text" id="ressursnummer" name="ressursnummer" [ngModel]="objekt?.ressursnummer"
+          required #ressursnummerCtrl="ngModel" autocomplete="off" (blur)="onBlur('ressursnummer',ressursnummerCtrl)">
+      </mat-form-field>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <mat-form-field>
+        <mat-select placeholder="Verktøygruppe" [ngModel]="objekt?.x_0" name="x_0" (change)="setVerktoyGruppe($event)">
+          <mat-option *ngFor="let option of lister.verktoyGrupper" [value]="option.display">
+            {{option.display}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </td>
+  </tr>
+  <tr>
+
+    <td>
+      <mat-form-field>
+        <mat-select placeholder="Status" [ngModel]="objekt?.tilgjengelig" name="tilgjengelig" (change)="setStatus($event)">
+          <mat-option *ngFor="let option of lister.status" [value]="option.display">
+            {{option.display}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </td>
+  </tr>
+  <tr>
+
+    <td>
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker1" placeholder="Innkjøpsdato" [ngModel]="objekt?.innkjopsdato" name="innkjopsdato"
+          autocomplete="off" (ngModelChange)="updateMyDate($event)">
+
+
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1 [startAt]="startDate"></mat-datepicker>
+      </mat-form-field>
+
+    </td>
+
+
+  </tr>
+  <tr>
+    <td>
+      <mat-form-field>
+        <input matInput placeholder="Reol" type="text" id="x_2" name="x_2" [ngModel]="objekt?.x_2" required #x_2Ctrl="ngModel" autocomplete="off"
+          #x_2ctrl (blur)="onBlur('x_2',x_2ctrl)">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Hylle" type="text" id="x_3" name="x_3" [ngModel]="objekt?.x_3" required #x_3Ctrl="ngModel" autocomplete="off"
+          #x_3ctrl (blur)="onBlur('x_3',x_3ctrl)">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Plass" type="text" id="x_4" name="x_4" [ngModel]="objekt?.x_4" required #x_4Ctrl="ngModel" autocomplete="off"
+          #x_4ctrl (blur)="onBlur('x_4',x_4ctrl)">
+      </mat-form-field>
+    </td>
+  </tr>
+
+</table>

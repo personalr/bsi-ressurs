@@ -1,0 +1,20 @@
+<div class="example-header">
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+  </mat-form-field>
+</div>
+<mat-table #table [dataSource]="dataSource" matSort>
+  <ng-container matColumnDef="prosjektnavn">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Prosjektnavn </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element?.prosjektnavn}} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="prosjekt_id">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Prosjektid </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element?.prosjekt_id}} </mat-cell>
+  </ng-container>
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="getClass(row)" (click)=aapneElement(row)>
+  </mat-row>
+</mat-table>
+<mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 100]">
+</mat-paginator>

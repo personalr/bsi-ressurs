@@ -1,0 +1,192 @@
+   
+
+<mat-tab-group (selectedTabChange)="onOpen($event)">
+  <mat-tab label="Verktøyadministrasjon"  >
+    <!-- --------------------------------------- Verktøyadministrasjon ----------------------------------------------------- -->
+    <div class="container" *ngIf="verktoyadministrasjon">
+      <mat-card class="example-card left" *ngIf="lister.harRolle('verktøy-rediger')">
+        <mat-card-header>
+
+          <mat-form-field>
+            <mat-select placeholder="Velg verktøygruppe" (change)="velgVerktoykategori($event)">
+              <mat-option *ngFor="let option of lister.verktoyGrupper" [value]="option.display">
+                {{option.display}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+
+          <span class="align_to_right"></span>
+
+          <button mat-button style='color: #777;' (click)="leggTilNy()" [disabled]="!verktoKategoriValgt">Legg til nytt verktøy +
+            <mat-icon>build</mat-icon>
+          </button>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="container1 mat-elevation-z8" *ngIf="redigerObjekt?.id">
+            <form (ngSubmit)="rediger(form)" #form="ngForm">
+              <input type="hidden" id="id" name="id" [ngModel]="redigerObjekt?.id">
+              <div class="example-container2">
+                <mat-form-field>
+                  <input matInput placeholder="Navn" type="text" id="navn" name="navn" [ngModel]="redigerObjekt?.navn" autocomplete="off" required
+                    #nameCtrl="ngModel"
+                    autocomplete="off">
+                </mat-form-field>
+
+                <mat-form-field>
+                  <input matInput [matDatepicker]="picker1" placeholder="Innkjøpsdato" [(ngModel)]="date" name="innkjopsdato" autocomplete="off">
+                  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                  <mat-datepicker #picker1 [startAt]="startDate"></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field>
+                  <input matInput placeholder="Id-nummer" type="text" id="ressursnummer" name="ressursnummer" [ngModel]="redigerObjekt?.ressursnummer"
+                    required #ressursnummerCtrl="ngModel" autocomplete="off">
+                </mat-form-field>
+
+
+
+                <mat-form-field>
+                  <mat-select placeholder="Verktøygruppe" [(ngModel)]="redigerObjekt.x_0" name="x_0" (change)="apply($event)">
+                    <mat-option *ngFor="let option of lister.verktoyGrupper" [value]="option.display">
+                      {{option.display}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+
+                <mat-form-field>
+                  <mat-select placeholder="Status" [(ngModel)]="redigerObjekt.tilgjengelig" name="tilgjengelig">
+                    <mat-option *ngFor="let option of lister.status" [value]="option.display">
+                      {{option.display}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field>
+                  <input matInput placeholder="Reol" type="text" id="x_2" name="x_2" [ngModel]="redigerObjekt?.x_2" required
+                    #x_2Ctrl="ngModel" autocomplete="off">
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput placeholder="Hylle" type="text" id="x_3" name="x_3" [ngModel]="redigerObjekt?.x_3" required
+                    #x_3Ctrl="ngModel" autocomplete="off">
+                </mat-form-field>
+                <mat-form-field>
+                  <input matInput placeholder="Plass" type="text" id="x_4" name="x_4" [ngModel]="redigerObjekt?.x_4" required
+                    #x_4Ctrl="ngModel" autocomplete="off">
+                </mat-form-field>
+
+
+
+                <div class="button-div">
+                  <button mat-raised-button type="submit" [disabled]="form.invalid">
+                    <mat-icon>save</mat-icon>
+                    <div>Lagre</div>
+                  </button>
+                  <button mat-raised-button (click)="avbryt()" type="button">
+                    <mat-icon>cancel</mat-icon>
+                    <div>Avbryt</div>
+                  </button>
+                  <button mat-raised-button (click)="slett(form)" type="button">
+                    <mat-icon>delete</mat-icon>
+                    <div>Slett</div>
+                  </button>
+                </div>
+
+
+
+              </div>
+            </form>
+          </div>
+
+        </mat-card-content>
+
+      </mat-card>
+      <mat-card class="example-card right">
+        <mat-card-header>
+          <mat-card-title>VERKTØY</mat-card-title>
+          <mat-card-subtitle>Oversikt over verktøy</mat-card-subtitle>
+          <span class="align_to_right"></span>
+
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="container1 mat-elevation-z8">
+            <div class="example-header">
+              <mat-form-field>
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+              </mat-form-field>
+            </div>
+
+            <mat-table #table [dataSource]="dataSource" matSort>
+              <ng-container matColumnDef="navn">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Navn </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element?.navn}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="ressursnummer">
+                <mat-header-cell [ngClass]="'id'" *matHeaderCellDef mat-sort-header> Id&#46;nr </mat-header-cell>
+                <mat-cell [ngClass]="'id'" *matCellDef="let element"> {{element?.ressursnummer}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="verktoygruppe">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Verktøygruppe </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element?.x_0}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="tilgjengelig">
+                <mat-header-cell [ngClass]="'status'" *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+                <mat-cell [ngClass]="'status'" *matCellDef="let element"> {{element?.tilgjengelig}} </mat-cell>
+              </ng-container>
+
+
+              <ng-container matColumnDef="reol">
+                <mat-header-cell [ngClass]="'plassering'" *matHeaderCellDef mat-sort-header> Reol </mat-header-cell>
+                <mat-cell [ngClass]="'plassering'" *matCellDef="let element"> {{element?.x_2}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="hylle">
+                <mat-header-cell [ngClass]="'plassering'" *matHeaderCellDef mat-sort-header> Hylle </mat-header-cell>
+                <mat-cell [ngClass]="'plassering'" *matCellDef="let element"> {{element?.x_3}} </mat-cell>
+              </ng-container>
+
+
+              <ng-container matColumnDef="plass">
+                <mat-header-cell [ngClass]="'plassering'" *matHeaderCellDef mat-sort-header> Plass </mat-header-cell>
+                <mat-cell [ngClass]="'plassering'" *matCellDef="let element"> {{element?.x_4}} </mat-cell>
+              </ng-container>
+
+
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;" class="highlight" (click)=aapneElement(row)>
+
+              </mat-row>
+
+            </mat-table>
+
+            <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 100]">
+            </mat-paginator>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+
+    <!-- --------------------------------------------------- Verktøyadministrasjon SLUTT --------------------------------------------- -->
+  </mat-tab>
+
+
+  <mat-tab label="Utlån" *ngIf="lister.harRolle('verktøy-rediger')"  >
+
+    <!-- -------------------------------- UTLÅN ------------------------------------------ -->
+
+
+
+    <app-utlaan *ngIf="utlan"></app-utlaan>
+
+
+    <!-- -------------------------- UTLÅN SLUTT ------------------------------------------------ -->
+  </mat-tab>
+  <mat-tab label="Innlevering" *ngIf="lister.harRolle('verktøy-rediger')" >
+     
+    <app-innlevering *ngIf="innlevering"></app-innlevering>
+  </mat-tab>
+</mat-tab-group>
+

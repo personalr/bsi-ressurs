@@ -1,0 +1,201 @@
+<div class="container">
+
+
+
+  <mat-card class="example-card left">
+    <mat-card-header>
+      <mat-card-title>STOFFKARTOTEK</mat-card-title>
+      <span class="align_to_right"></span>
+      <button *ngIf="lister.harRolle('stoffkartotek')" mat-button style='color: #777;' (click)="leggTilNy()">Legg til nytt stoff
+        <mat-icon>person_add</mat-icon>
+      </button>
+    </mat-card-header>
+    <!-- ['navn', 'leverandor', 'revisjonsdato', 'faresetninger', 'fareklasse', 'verneutstyr']-->
+
+    <mat-card-content>
+      <div class="example-container mat-elevation-z8">
+        <div class="example-header">
+          <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+          </mat-form-field>
+        </div>
+        <mat-table #table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="navn">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Navn </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.navn}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="leverandor">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Leverandor </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.leverandor}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="revisjonsdato">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Revisjonsdato </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.revisjonsdato}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="faresetninger">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Faresetninger </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.faresetninger}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="farepiktogram">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Farepiktogram </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <img *ngFor="let bilde of element?.farepiktogrammer" [src]='bilde.image' style="height:40px; width: auto;">
+            </mat-cell>
+          </ng-container>
+          <!--          .  1-2 gir grønn rute, 3-4 gir gul rute, 5-6 gir rød rute -->
+          <ng-container matColumnDef="fareklasse">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Fareklasse </mat-header-cell>
+            <mat-cell *matCellDef="let element" [style.background]="getFareklasseColor(element?.fareklasse)"> {{element?.fareklasse}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="verneutstyr">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Verneutstyr </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.verneutstyr}} </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="highlight" (click)=aapneElement(row)>
+          </mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageSize]="20" [pageSizeOptions]="[5, 10, 20, 50 , 100]">
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="example-card right" *ngIf="lister.harRolle('stoffkartotek')">
+      <mat-card-header>
+        <mat-card-title>STOFF</mat-card-title>
+        <mat-card-subtitle>Detalj over stoff</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+  
+        <mat-accordion class="example-headers-align" *ngIf="redigerObjekt?.id">
+          <form (ngSubmit)="rediger(form)" #form="ngForm">
+            <input type="hidden" id="id" name="id" [ngModel]="redigerObjekt?.id">
+            <div class="button-div">
+  
+              <button mat-raised-button type="submit" [disabled]="!datoValid(revisjonsdato.value)||form.invalid||!fareklasseValid(fareklasse.value)" class="liten-knapp">
+                <mat-icon>save</mat-icon>
+                <div>Lagre</div>
+              </button>
+  
+              <button mat-raised-button (click)="avbryt()" type="button" class="liten-knapp">
+                <mat-icon>cancel</mat-icon>
+                <div>Avbryt</div>
+              </button>
+              <button mat-raised-button (click)="slett(form)" type="button" class="liten-knapp">
+                <mat-icon>delete</mat-icon>
+                <div>Slett</div>
+              </button>
+            </div>
+  
+            <mat-expansion-panel style="margin:20px" style="background-color:  rgb(254, 255, 254)">
+              <mat-expansion-panel-header style="background-color: rgb(233, 243, 234);margin:20px" class="mat-elevation-z8">
+                <mat-panel-title>
+                  {{redigerObjekt?.navn}}
+                  <span class="align_to_right"></span>
+                  <mat-icon>edit</mat-icon>
+                </mat-panel-title>
+  
+              </mat-expansion-panel-header>
+              <table style="width: 100%">
+                <tr>
+                  <td>
+                    <mat-form-field>
+                      <input matInput placeholder="navn" type="text" id="navn" name="navn" [ngModel]="redigerObjekt?.navn" required #nameCtrl="ngModel"
+                        autocomplete="off">
+                    </mat-form-field>
+                  </td>
+                  <td>
+                    <mat-form-field>
+                      <input matInput placeholder="leverandør" type="text" id="leverandor" name="leverandor" [ngModel]="redigerObjekt?.leverandor"
+                        required #emailCtrl="ngModel" autocomplete="off">
+                    </mat-form-field>
+                  </td>
+  
+                </tr>
+                <tr>
+                  <td>
+                    <mat-form-field>
+            
+                      <input matInput placeholder="revisjonsdato (dd-mm-åååå)" type="text" name="revisjonsdato" [ngModel]="redigerObjekt?.revisjonsdato"
+                        autocomplete="off" maxlength="10" #revisjonsdato>
+  
+  
+  
+                    </mat-form-field>
+                  </td>
+                  <td>
+                    <mat-form-field>
+                      <input matInput placeholder="faresetninger" type="text" id="faresetninger" name="faresetninger" [ngModel]="redigerObjekt?.faresetninger"
+                        required #emailCtrl="ngModel" autocomplete="off">
+                    </mat-form-field>
+                  </td>
+  
+                </tr>
+                <tr>
+                  <td>
+                    <mat-form-field>
+                      <input matInput placeholder="fareklasse" type="text" id="fareklasse" name="fareklasse" [ngModel]="redigerObjekt?.fareklasse"
+                        required #emailCtrl="ngModel" autocomplete="off"  maxlength="1" #fareklasse>
+                    </mat-form-field>
+                  </td>
+                  <td>
+                    <mat-form-field>
+                      <input matInput placeholder="verneutstyr" type="text" id="verneutstyr" name="verneutstyr" [ngModel]="redigerObjekt?.verneutstyr"
+                        required #emailCtrl="ngModel" autocomplete="off">
+                    </mat-form-field>
+                  </td>
+                </tr>
+              </table>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header style="background-color: rgb(233, 243, 234);margin:20px" class="mat-elevation-z8">
+                <mat-panel-title>
+                  {{redigerObjekt?.navn}} farepiktogrammer
+                  <span class="align_to_right"></span>
+                  <mat-icon>edit</mat-icon>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <table>
+                <tr style="outline: thin solid" *ngFor="let option of farepiktogrammene">
+                  <td>
+                    <mat-checkbox [(ngModel)]="option.checked" [name]="option.id"></mat-checkbox>
+                  </td>
+                  <td>
+                    <img [src]='option.image' style="height:50px; width: auto;">
+                  </td>
+                  <td>
+                    <strong>{{option.tittel}}</strong>
+                  </td>
+                  <!--    <td style="font-size: 8px"> -->
+                  <td>
+                    {{option.beskrivelse}}
+                  </td>
+                </tr>
+              </table>
+            </mat-expansion-panel>
+  
+  
+            <mat-expansion-panel style="margin:20px" style="background-color:  rgb(254, 255, 254)" *ngIf="redigerObjekt?.id!='ny'">
+              <mat-expansion-panel-header style="background-color: rgb(233, 243, 234);margin:20px" class="mat-elevation-z8">
+                <mat-panel-title>
+                  <mat-icon>picture_as_pdf</mat-icon>
+                  <!-- ({{objekt.beskrivelse}})-->
+                  <span style="flex: 1 1 auto;"></span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+  
+  
+              <app-pdf-generell [objekt]="redigerObjekt" (pdfEndret)="endrerPdf($event)"></app-pdf-generell>
+  
+            </mat-expansion-panel>
+          </form>
+        </mat-accordion>
+      </mat-card-content>
+    </mat-card>
+  
+</div>

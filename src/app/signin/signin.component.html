@@ -1,0 +1,86 @@
+<!--
+<div class="row">
+  <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+      <div class="form-group">
+        <label for="email">Mail</label>
+        <input type="email" id="email" name="email" ngModel class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          ngModel
+          class="form-control">
+      </div>
+      <button class="btn btn-primary" type="submit" [disabled]="!f.valid">Sign In</button>
+  
+  </div>
+</div>
+-->
+<form (ngSubmit)="onSignin(f)" #f="ngForm">
+
+<p>
+   
+    <mat-card class="card-style">
+
+      <div align="center">
+          <img md-card-image class="image-card-style" src="./assets/img/BSI-OFFSHORE-LOGO-VEKTOR.svg">
+         <h1>RESSURS</h1> 
+        </div>
+  
+      <mat-card-content  class="card-content-style">
+        <div align="center">
+        
+          <mat-input-container>
+            <!--
+            <input matInput placeholder="email"  [(ngModel)]="email">
+            -->
+
+            <input  type="email"  id="email" name="email" ngModel matInput placeholder="email" >
+
+          </mat-input-container><br/>
+          <mat-input-container>
+
+
+
+<!--
+            <input matInput placeholder="password" type="password" [(ngModel)]="password">
+-->     
+<input matInput
+placeholder="password"
+id="password"
+name="password"
+ngModel 
+type="password"
+>      
+         
+         
+         
+         
+         
+          </mat-input-container>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <div align="center">
+            <button mat-button  type="submit" [disabled]="!f.valid"><mat-icon  >check</mat-icon>Logg inn</button>
+            
+          <!--
+          <button mat-button (click)="checkEmailPassword()"><mat-icon  >check</mat-icon>Logg inn</button>
+
+          <button class="btn btn-primary" type="submit" [disabled]="!f.valid">Sign In</button>
+
+          -->
+        </div>
+  
+      </mat-card-actions>
+    </mat-card>
+  </p>
+</form>
+
+
+<!--
+<input type="text"  #test><button (click)="tester(test.value)">Test</button>
+-->

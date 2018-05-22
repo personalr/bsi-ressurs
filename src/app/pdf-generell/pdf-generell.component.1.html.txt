@@ -1,0 +1,54 @@
+<h4>
+  To do:
+  <ol>
+    <li>
+      Hente feil fra API
+    </li>
+  </ol>
+</h4>
+<!--
+<div style="display:flex">
+
+  <div style="width: 50%"></div>
+  <div class="uploadFile" style="width: 20%;border: solid blue">
+    <label for="pdf{{randomid}}" class="uploadBtn33Label" style = "border: solid grey">
+      <mat-icon style="padding:10px">{{tekst}}</mat-icon>   
+    </label>
+    <div> {{undertekst}}</div>
+    <input type="file" (change)="onFileChange1($event)" id="pdf{{randomid}}" style="display: none" accept=".pdf" />
+  </div>
+  <div class="uploadFile" (click)="slett()" *ngIf="objekt.image_id" style="width: 20%; border: solid red">
+    <label class="uploadBtn33Label"  style = "border: solid grey">
+      <mat-icon>delete</mat-icon>
+    </label>
+    <div>slett</div>
+  </div>
+</div>
+
+-->
+
+<table>
+  <tr>
+    <td style="width:70%">
+    </td>
+    <td align="center">
+      <label for="pdf{{randomid}}" class="uploadBtn33Label">
+        <mat-icon>{{tekst}}</mat-icon>
+      </label>
+      <div> {{undertekst}}</div>
+      <input type="file" (change)="onFileChange1($event)" id="pdf{{randomid}}" style="display: none" accept=".pdf" />
+    </td>
+    <td (click)="slett()" *ngIf="objekt.image_id" align="center" style="padding: 0 20px">
+      <label class="uploadBtn33Label">
+        <mat-icon>delete</mat-icon>
+      </label>
+      <div>Slett</div>
+    </td>
+  </tr>
+</table>
+
+
+<img src="./assets/img/favicon.svg" style="height:350px;" *ngIf="!objekt.image_id">
+<object [attr.data]="imagePdf" type="application/pdf" style="width:100%; height:800px" *ngIf="objekt.image_id">
+  <a href="imagePdf">test.pdf</a>
+</object>

@@ -1,0 +1,88 @@
+<div class="container">
+  <mat-card class="example-card left">
+    <mat-card-header>
+      <mat-card-title>ARBEIDSTØY/PPE</mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="example-container mat-elevation-z8">
+
+
+        <div class="example-header">
+          <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+          </mat-form-field>
+        </div>
+
+        <mat-table #table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="navn">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Navn </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <input type="text" autocomplete="off" [(ngModel)]="element.navn" style="background-color: rgb(255, 255, 255)">
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="storrelse">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Størrelse </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <input type="text" autocomplete="off" [(ngModel)]="element.storrelse" [disabled]="!element.edit">
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="antall">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Antall </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <input type="text" autocomplete="off" [(ngModel)]="element.antall">
+
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="uttak">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Uttak </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <input type="text" autocomplete="off" [(ngModel)]="element.uttak">
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="innlevering">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Innlevering </mat-header-cell>
+
+            <mat-cell *matCellDef="let element">
+              <input type="text" autocomplete="off" [(ngModel)]="element.innlevering">
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="knapper">
+            <mat-header-cell *matHeaderCellDef>
+              <button *ngIf="lister.harRolle('arbeidstøy-rediger')" mat-button style='color: #777;' (click)="leggTilNy()">Legg til nytt produkt
+                <mat-icon>control_point</mat-icon>
+              </button>
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let element">
+              <button mat-raised-button class="liten-knapp" (click)="rediger(element.id)">
+                <mat-icon>edit</mat-icon>
+              </button>
+
+              <button mat-raised-button class="liten-knapp" (click)="lagre(element.id)" *ngIf="lister.harRolle('verktøy-rediger')">
+
+                <mat-icon>save</mat-icon>
+              </button>
+              <button mat-raised-button class="liten-knapp" (click)="slett(element.id)" *ngIf="lister.harRolle('verktøy-rediger')">
+                <mat-icon>delete</mat-icon>
+              </button>
+
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="highlight" (click)="toggleEnabledElement(row)">
+
+          </mat-row>
+        </mat-table>
+        <mat-paginator #paginator [pageSize]="20" [pageSizeOptions]="[5, 10, 20, 50 , 100]">
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

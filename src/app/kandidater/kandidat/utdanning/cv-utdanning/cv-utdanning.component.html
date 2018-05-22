@@ -1,0 +1,28 @@
+<div>
+  <mat-form-field>
+    <input matInput placeholder="beskrivelse" type="text" value="{{objekt.beskrivelse}}" autocomplete="off" #beskrivelse>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="fra dato (dd-mm-åååå)" type="text" value="{{objekt.fra_dato}}" autocomplete="off" #fra_dato>
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="til dato (dd-mm-åååå)" type="text" value="{{objekt.til_dato}}" autocomplete="off" #til_dato>
+  </mat-form-field>
+  <mat-checkbox #utskrift [checked]="objekt.utskrift=='ja'">Utskrift</mat-checkbox>
+  <button mat-button [disabled]="!datoValid(fra_dato.value)||!datoValid(til_dato.value)" type="button" style='color: rgb(65, 63, 63);'
+    [style.background-color]="updateStyle(!datoValid(fra_dato.value)||!datoValid(til_dato.value))" (click)="save(beskrivelse, fra_dato, til_dato, utskrift)">Lagre
+    <mat-icon>save</mat-icon>
+  </button>
+  <button mat-button type="button" style='color: rgb(65, 63, 63);' (click)="slett(beskrivelse, fra_dato, til_dato)">Slett
+    <mat-icon>delete</mat-icon>
+  </button>
+</div>
+<mat-expansion-panel class="mat-elevation-z8" *ngIf="objekt?.id !='ny'" #pdftest>
+  <mat-expansion-panel-header style="background-color: #e6e6e6;">
+    <mat-panel-title>
+      <mat-icon>picture_as_pdf</mat-icon>({{objekt.beskrivelse}})
+      <span style="flex: 1 1 auto;"></span>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <app-pdf-generell [objekt]="objekt" (pdfEndret)="endrerPdf($event)" *ngIf="pdftest.expanded"></app-pdf-generell>
+</mat-expansion-panel>

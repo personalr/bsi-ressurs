@@ -1,0 +1,69 @@
+<h3>To do:</h3>
+<h4>
+  <ol>
+    <li>Sletting må være cascading</li>
+    <li>Navn forsvinner fra personalia ved innlegging av bilde??</li>
+  </ol>
+</h4>
+
+<div class="container">
+  <mat-card class="example-card left">
+    <mat-card-header>
+      <mat-card-title>KANDIDAT</mat-card-title>
+      <mat-card-subtitle>Detalj om kandidat</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <app-kandidat [objekt]="redigerObjekt" (objektEndret)="redigerObjektEndret($event)"></app-kandidat>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="example-card right">
+    <mat-card-header>
+      <mat-card-title>KANDIDATER</mat-card-title>
+      <mat-card-subtitle>Oversikt over kandidater</mat-card-subtitle>
+      <span class="align_to_right"></span>
+      <button mat-button style='color: #777;' (click)="leggTilNy()">Legg til ny kandidat
+        <mat-icon>person_add</mat-icon>
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="example-container mat-elevation-z8">
+        <div class="example-header">
+          <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+          </mat-form-field>
+        </div>
+        <mat-table #table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="fornavn">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> fornavn </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.fornavn}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="etternavn">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> etternavn </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.etternavn}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="primaerkompetanse">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> primærkompetanse </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.primaerkompetanse}} </mat-cell>
+          </ng-container>
+          
+          <ng-container matColumnDef="flyplass">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> flyplass </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.flyplass}} </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="highlight" (click)=aapneElement(row)>
+
+          </mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[10, 20, 50, 100]">
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

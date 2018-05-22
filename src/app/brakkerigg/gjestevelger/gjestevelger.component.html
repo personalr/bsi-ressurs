@@ -1,0 +1,48 @@
+<!--
+  <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+  
+  <mat-table #table [dataSource]="dataSource" matSort *ngIf="burdeVises()">
+    <ng-container matColumnDef="navn">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Navn </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element?.navn}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="kunde" matSort>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Kunde </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element?.kundenavn}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="highlight" (click)=aapneElement(row)>
+    </mat-row>
+  </mat-table>
+-->
+
+
+<div class="parent">
+
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Gjest" [ngModel]="gjest?.navn">
+  </mat-form-field>
+  <div class="element" *ngIf="visForslag()">
+    <mat-table #table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="navn">
+
+        <mat-header-cell *matHeaderCellDef >  </mat-header-cell>
+
+        <mat-cell *matCellDef="let element"> {{element?.navn}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="kunde" matSort>
+
+        <mat-header-cell *matHeaderCellDef>  </mat-header-cell>
+
+        <mat-cell *matCellDef="let element"> {{element?.kundenavn}} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns" style="display: none;"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="highlight" (click)=velgElement(row)>
+      </mat-row>
+    </mat-table>
+  </div>
+</div>

@@ -1,0 +1,509 @@
+import { Logo } from './../../services/logo';
+import * as jsPDF from 'jspdf';
+
+import { DataStorageService } from './../../services/data-storage.service';
+import { FormGroup, Validators } from '@angular/forms';
+// tslint:disable:comment-format
+// tslint:disable:member-ordering
+// tslint:disable:max-line-length
+
+import { ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, SimpleChanges, Inject } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Observable } from 'rxjs/Observable';
+import { AbstractControl } from '@angular/forms';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { Headers, Http, Response, RequestOptions } from '@angular/http';
+import { Injectable, EventEmitter } from '@angular/core';
+import { AuthService } from './../../signin/auth.service';
+import { Lister } from '../../services/lister';
+import { OnChanges } from '@angular/core/src/metadata/lifecycle_hooks';
+import { NgForm } from '@angular/forms';
+import { FormControl } from '@angular/forms';
+
+
+@Component({
+  selector: 'app-kandidat',
+  templateUrl: './kandidat.component.html',
+  styleUrls: ['./kandidat.component.css'],
+  providers: [
+    { provide: 'Window', useValue: window }
+  ]
+})
+export class KandidatComponent implements OnInit, OnChanges {
+
+  @Input() objekt: any;
+  @Output() objektEndret: EventEmitter<any> = new EventEmitter();
+  //  @ViewChild('form') signupForm: NgForm;
+
+  testForm: FormGroup; // A form is just a group of controls
+
+  constructor(
+    private http: Http,
+    private authService: AuthService,
+    private lister: Lister,
+    private logo: Logo,
+    public sanitizer: DomSanitizer,
+    public dss: DataStorageService,
+    @Inject('Window') private window: Window,
+  ) { }
+
+  ngOnInit() {
+    this.testForm = new FormGroup({
+      id: new FormControl(null),
+      fornavn: new FormControl(null, Validators.required),
+      etternavn: new FormControl(null, Validators.required),
+      adresse: new FormControl(null),
+      poststed: new FormControl(null),
+      postnummer: new FormControl(null),
+      fodselsaar: new FormControl(null, Validators.required),
+      mail: new FormControl(null),
+      telefon: new FormControl(null),
+      image_id: new FormControl(null),
+      nasjonalitet: new FormControl(null, Validators.required),
+      flyplass: new FormControl(null, Validators.required),
+      cv_poster: new FormControl(null),
+      primaerkompetanse: new FormControl(null, Validators.required),
+    });
+
+
+  }
+
+
+  leggTilCvElement() {
+    if (this.objekt.cv_poster === undefined) {
+      this.objekt.cv_poster = [];
+    }
+    const resultArray = this.objekt.cv_poster.filter(function (item) {
+      return item['id'] === 'ny';
+    });
+    if (resultArray.length === 1) {
+    } else {
+      const nyttCVElement = {
+        id: 'ny',
+        arbeidsgiver: '',
+        arrangor: '',
+        beskrivelse: '',
+        fra_dato: '',
+        til_dato: '',
+        kandidat_id: this.objekt.id,
+        image_id: null,
+        tittel: '(tittel)',
+        type_post: '(type)',
+        primaerkompetanse: '',
+      };
+      this.objekt.cv_poster.push(nyttCVElement);
+    }
+  }
+
+
+  cvEndring(inn) {
+    if (inn.slett) {
+      this.objekt.cv_poster.splice(this.objekt.cv_poster.indexOf(inn.slett), 1);
+    }
+    if (inn.rediger) {
+      delete inn.rediger;
+      for (let i = 0; i < this.objekt.cv_poster.length; i++) {
+        if (this.objekt.cv_poster[i].id === inn.id) {
+          this.objekt.cv_poster[i] = inn;
+        }
+      }
+    }
+    this.objektEndret.emit('');
+
+  }
+
+
+  ngOnChanges(changes: SimpleChanges) {
+
+
+    if (this.objekt) {
+
+      this.testForm.setValue(this.objekt);
+      /*
+            if (!this.objekt.image_id) {
+              this.objekt.image_id = 'ny';
+      
+            }
+        */
+    }
+  }
+
+
+  avbryt(form) {
+    let control: AbstractControl = null;
+    this.testForm.reset();
+    this.testForm.markAsUntouched();
+    Object.keys(this.testForm.controls).forEach((name) => {
+      control = this.testForm.controls[name];
+      control.setErrors(null);
+    });
+    this.objekt = null;
+  }
+
+
+
+  bildeErLagtInn(element) {
+    if (element.nytt_image) {
+      // this.objekt.image_id = element.nytt_image;
+      const obj: any = { id: this.objekt.id, image_id: element.nytt_image };
+      this.dss.set(obj, 'kandidater').subscribe((response) => {
+        //        this.setUp();
+        this.testForm.setValue(this.objekt);
+
+      },
+        (error) => {
+          alert(error.code + ' ' + error.error);
+        }
+      );
+    }
+    if (element.slett_image) {
+      console.log('parent registrerer endring: sletter ');
+      this.objekt.image_id = null;
+      const obj: any = { id: this.objekt.id, image_id: 'slett' };
+
+      this.dss.set(obj, 'kandidater').subscribe((response) => {
+        //      this.setUp();
+        this.testForm.setValue(this.objekt);
+
+      },
+        (error) => {
+          alert(error.code + ' ' + error.error);
+        }
+      );
+    }
+  }
+
+  /*
+  nyImageIdSattForKandidat(objekt: any) {
+    this.objekt.image_id = objekt;
+    this.testForm.setValue(this.objekt);
+    this.red();
+  }
+*/
+
+
+  red() {
+    //    if (this.testForm.value.image_id === 'ny'!!) {
+    //   delete this.testForm.value.image_id;
+    //  }
+
+    delete this.testForm.value.image_id;
+
+    if (this.testForm.value.id === 'ny') {
+
+      this.dss.ny(this.testForm.value, 'kandidater').subscribe((res) => {
+        this.testForm.value.id = this.objekt.id = res.id;
+        this.objektEndret.emit(res);
+        //  this.objektEndret.emit(this.testForm.value);
+      }, (error) => {
+        console.log(error.code + ' ' + error.error);
+        //       alert(error.code + ' ' + error.error);
+      });
+      this.objektEndret.emit(this.testForm.value);
+    } else {
+      this.dss.set(this.testForm.value, 'kandidater').subscribe((response) => {
+        this.objektEndret.emit(response);
+        this.testForm.setValue(response);
+
+      }, (error) => { alert(error.code + ' ' + error.error); });
+    }
+  }
+
+
+  slett() {
+    const r = confirm('Følgende kandidat slettes: \nForavn: ' + this.testForm.value.fornavn + '\nEtternavn: ' + this.testForm.value.etternavn);
+    if (r === true) {
+      /*
+      if (this.testForm.value.image_id !== null) {
+        this.dss.slett(this.testForm.value.image_id, 'images').subscribe((response) => {
+          this.objekt = null;
+
+        },
+          (error) => {
+            alert(error.code + ' ' + error.error);
+          }
+        );
+      }
+*/
+      this.dss.slett(this.testForm.value.id, 'kandidater').subscribe((response) => {
+        this.objektEndret.emit(this.testForm.value);
+        this.objekt = null;
+
+      },
+        (error) => {
+          alert(error.code + ' ' + error.error);
+        }
+      );
+
+    }
+  }
+  utdanningEndret(inn) {
+    console.log('Linje  69: Kandidat (kandidat.component.ts) registrerer at utdanning er endret.');
+    console.log('Linje  70: Hvilke endringer er gjort?');
+
+  }
+
+  kursEndret(inn) {
+    console.log('Linje  79: Kandidat (kandidat.component.ts) registrerer at kurs er endret.');
+    console.log('Linje  80: Hvilke endringer er gjort?');
+
+  }
+
+
+  /*
+    public cvType = [
+      { display: 'Utdanning' },
+      { display: 'Kurs' },
+      { display: 'Efaring' },
+      { display: 'Efaring hos BSI-Offshore' },
+    ];
+  */
+  //private readonly imageType: string = 'data:image/JPG;base64,';
+  logoImage;
+  download() {
+    let myImage;
+    //   let logoImage;
+
+    const utdanning: any[] = [];
+    const kurs: any[] = [];
+    const erfaring: any[] = [];
+    const attest: any[] = [];
+
+    this.dss.get(this.objekt.image_id, 'images')
+      .subscribe((img) => {
+        myImage = 'data:image/jpeg;base64,' + img.image;
+        this.logoImage = 'data:image/jpeg;base64,' + this.logo.logo.image;
+
+        this.dss.get(this.objekt.id, 'kandidater')
+          .subscribe((data) => {
+            for (let i = 0; i < data.cv_poster.length; i++) {
+              if (data.cv_poster[i].utskrift === 'ja') {
+
+                if (data.cv_poster[i].type_post === 'utdanning') {
+                  utdanning.push(data.cv_poster[i]);
+                }
+
+                if (data.cv_poster[i].type_post === 'erfaring') {
+                  //    alert();
+                  erfaring.push(data.cv_poster[i]);
+                }
+                if (data.cv_poster[i].type_post === 'kurs') {
+                  kurs.push(data.cv_poster[i]);
+                }
+                if (data.cv_poster[i].type_post === 'attest') {
+                  attest.push(data.cv_poster[i]);
+                }
+
+              }
+            }
+            const doc = new jsPDF();
+            const billedstorrelse = 35;
+            const logostorrelse = 20;
+            const skrift = 12;
+            const fradatoMotVenstre = 42;
+            const beskrivelseMotVenstre = 80;
+            let index = (Number(img.width) / Number(img.height));
+            let logoIndex = (Number(this.logo.logo.width) / Number(this.logo.logo.height));
+
+            index = (index * billedstorrelse);
+            logoIndex = (logoIndex * logostorrelse);
+            index = Math.trunc(index);
+            logoIndex = Math.trunc(logoIndex);
+
+            doc.setDrawColor(0, 61, 122); //MØRK
+            doc.setLineWidth(0.1);
+            doc.line(186, 55, 186, 290); // vertical line
+
+            doc.setDrawColor(133, 175, 204); // LYS
+            doc.setLineWidth(0.5);
+            doc.line(188, 55, 188, 290);
+
+            doc.setDrawColor(105, 181, 88); // GRØNN
+            doc.setLineWidth(1);
+            doc.line(190, 55, 190, 290);
+
+            doc.setFontSize(23);
+
+            doc.text(20, 40, 'Curriculum Vitae');
+            doc.addImage(this.logoImage, 'JPG', 140, 15, logoIndex, logostorrelse);
+            console.log(logoIndex + '----------' + logostorrelse);
+
+            doc.addImage(myImage, 'JPG', 140, 40, index, billedstorrelse);
+            doc.setFontSize(12);
+            doc.text(20, 50, 'Navn:' + data.fornavn + ' ' + data.etternavn);
+            doc.text(20, 57, 'Fødselsår: ' + data.fodselsaar);
+            doc.text(20, 64, 'Primærkompetanse: ' + data.primaerkompetanse);
+            doc.text(20, 71, 'Nasjonalitet: ' + data.nasjonalitet);
+
+            let nedover = 105;
+
+
+
+            doc.setFontSize(16);
+
+
+            ////
+          nedover =  this.setOppPoster(utdanning,nedover,'Utdanning:', doc, skrift,fradatoMotVenstre, beskrivelseMotVenstre);
+/*
+            
+            if (utdanning.length > 0) {
+              doc.text(20, nedover, 'Utdanning:');
+
+              for (let i = 0; i < utdanning.length; i++) {
+                doc.setFontSize(skrift);
+
+
+                if (nedover > 270) {
+                  nedover = 10;
+                  nedover = nedover + 10;
+                  this.sideskift(doc, 'Utdanning (forts):');
+                }
+
+
+                nedover = nedover + 7;
+                if (utdanning[i].fra_dato !== null) { doc.text(20, nedover, utdanning[i].fra_dato); }
+                if (utdanning[i].til_dato !== null) { doc.text(fradatoMotVenstre, nedover, ' - ' + utdanning[i].til_dato); }
+                if (utdanning[i].beskrivelse !== null) { doc.text(beskrivelseMotVenstre, nedover, utdanning[i].beskrivelse); }
+              }
+
+              nedover = nedover + 15;
+            }
+            */
+
+            ////
+
+            doc.setFontSize(16);
+
+            if (kurs.length > 0) {
+              doc.text(20, nedover, 'Kurs: ');
+
+
+              for (let i = 0; i < kurs.length; i++) {
+                doc.setFontSize(skrift);
+
+                if (nedover > 270) {
+                  nedover = 10;
+                  nedover = nedover + 10;
+                  this.sideskift(doc, 'Kurs (forts):');
+                }
+
+                nedover = nedover + 7;
+                if (kurs[i].fra_dato !== null) { doc.text(20, nedover, kurs[i].fra_dato); }
+                if (kurs[i].til_dato !== null) { doc.text(fradatoMotVenstre, nedover, ' - ' + kurs[i].til_dato); }
+                if (kurs[i].beskrivelse !== null) { doc.text(beskrivelseMotVenstre, nedover, kurs[i].beskrivelse); }
+              }
+
+              nedover = nedover + 15;
+
+            }
+            doc.setFontSize(15);
+
+            if (erfaring.length > 0) {
+              doc.text(20, nedover, 'Erfaring: ');
+              for (let i = 0; i < erfaring.length; i++) {
+                doc.setFontSize(skrift);
+                nedover = nedover + 7;
+                if (nedover > 270) {
+                  nedover = 10;
+                  nedover = nedover + 10;
+                  this.sideskift(doc, 'Erfaring (forts):');
+                }
+
+                if (erfaring[i].fra_dato !== null) { doc.text(20, nedover, erfaring[i].fra_dato); }
+                if (erfaring[i].til_dato !== null) { doc.text(fradatoMotVenstre, nedover, ' - ' + erfaring[i].til_dato); }
+                if (erfaring[i].beskrivelse !== null) { doc.text(beskrivelseMotVenstre, nedover, erfaring[i].beskrivelse); }
+              }
+
+              nedover = nedover + 15;
+
+            }
+            doc.setFontSize(15);
+
+            if (attest.length > 0) {
+              doc.text(20, nedover, 'Attester: ');
+
+
+              for (let i = 0; i < attest.length; i++) {
+                doc.setFontSize(skrift);
+                nedover = nedover + 7;
+                if (nedover > 270) {
+                  nedover = 10;
+                  nedover = nedover + 10;
+                  this.sideskift(doc, 'Attester (forts):');
+                }
+
+                if (attest[i].fra_dato !== null) { doc.text(20, nedover, attest[i].fra_dato); }
+                if (attest[i].til_dato !== null) { doc.text(fradatoMotVenstre, nedover, ' - ' + attest[i].til_dato); }
+                if (attest[i].beskrivelse !== null) { doc.text(beskrivelseMotVenstre, nedover, attest[i].beskrivelse); }
+              }
+              nedover = nedover + 15;
+            }
+
+            doc.setTextColor(100);
+            doc.setTextColor(100);
+            doc.save(this.objekt.fornavn + '-' + this.objekt.etternavn + '.pdf');
+
+
+          },
+          (error) => {
+          }
+          );
+
+
+
+      },
+      (error) => {
+        console.log('Feil: Fant ikke bilde');
+      }
+      );
+
+  }
+
+  sideskift(doc, avsnitt) {
+
+    doc.addPage();
+
+    doc.text(10, 5, 'CV: ' + this.objekt.fornavn + ' ' + this.objekt.etternavn + ' ' + avsnitt);
+    doc.addImage(this.logoImage, 'JPG', 165, 2, 41, 15); //62----------20
+    doc.setDrawColor(0, 61, 122); //MØRK
+    doc.setLineWidth(0.1);
+    doc.line(186, 18, 186, 290); // vertical line
+    doc.setDrawColor(133, 175, 204); // LYS
+    doc.setLineWidth(0.5);
+    doc.line(188, 18, 188, 290);
+    doc.setDrawColor(105, 181, 88); // GRØNN
+    doc.setLineWidth(1);
+    doc.line(190, 18, 190, 290);
+  }
+
+
+ setOppPoster(utdanning,nedover,type_post, doc,skrift,fradatoMotVenstre,beskrivelseMotVenstre){
+//let nedover;
+  if (utdanning.length > 0) {
+    doc.text(20, nedover, type_post);
+
+    for (let i = 0; i < utdanning.length; i++) {
+      doc.setFontSize(skrift);
+
+
+      if (nedover > 270) {
+        nedover = 10;
+        nedover = nedover + 10;
+        this.sideskift(doc, 'Utdanning (forts):');
+      }
+
+
+      nedover = nedover + 7;
+      if (utdanning[i].fra_dato !== null) { doc.text(20, nedover, utdanning[i].fra_dato); }
+      if (utdanning[i].til_dato !== null) { doc.text(fradatoMotVenstre, nedover, ' - ' + utdanning[i].til_dato); }
+      if (utdanning[i].beskrivelse !== null) { doc.text(beskrivelseMotVenstre, nedover, utdanning[i].beskrivelse); }
+    }
+
+    nedover = nedover + 15;
+  }
+  return nedover;
+}
+
+
+}

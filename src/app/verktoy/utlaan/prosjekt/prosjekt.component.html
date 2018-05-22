@@ -1,0 +1,29 @@
+<mat-table #tablePlukk [dataSource]="dataSourcePlukk" matSort   *ngIf="objekt?.id !='ny'">
+
+    <ng-container matColumnDef="velg">
+      <mat-header-cell *matHeaderCellDef mat-sort-header class="cellevidde_knapp_header"></mat-header-cell>
+      <mat-cell *matCellDef="let element"  class="cellevidde_knapp">
+          <button mat-raised-button (click)="leverTilLager(element)"  type="button"  class="liten-knapp">
+            <mat-icon> arrow_backward</mat-icon>
+          </button>
+      </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="navn">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Navn </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{element?.navn}} </mat-cell>
+    </ng-container>
+  
+    <ng-container matColumnDef="ressursnummer">
+      <mat-header-cell class="cellevidde_idnr_header" *matHeaderCellDef mat-sort-header> Id&#46;nr </mat-header-cell>
+      <mat-cell  class="cellevidde_idnr" *matCellDef="let element"> {{element?.ressursnummer}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="verktoygruppe">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Verktøygruppe </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element?.x_0}} </mat-cell>
+    </ng-container>
+  
+  
+    <mat-header-row *matHeaderRowDef="displayedColumnsPlukk"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumnsPlukk;" [ngClass]="'highlight'" (click)="settVerktoy(row)"></mat-row>
+  </mat-table>

@@ -1,0 +1,92 @@
+<div class="container">
+  <mat-card class="example-card left">
+    <mat-card-header>
+      <mat-card-title>GJEST</mat-card-title>
+      <mat-card-subtitle>Detalj over gjest</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+
+      <div class="example-container mat-elevation-z8" *ngIf="redigerObjekt?.id">
+              
+        <form (ngSubmit)="rediger(form)" #form="ngForm">
+          <input type="hidden" id="id" name="id" [ngModel]="redigerObjekt?.id">
+          
+          <div class="example-container2">
+            <mat-form-field>
+              <input matInput placeholder="Navn" type="text" id="navn" name="navn" [ngModel]="redigerObjekt?.navn" required #nameCtrl="ngModel" autocomplete="off">
+            </mat-form-field>
+
+ 
+            <mat-form-field>
+              <mat-select placeholder="Kunde" [(ngModel)]="redigerObjekt.rig_kunde.id" name="kunde_id"  id="kunde_id" #kunde_idCtrl>
+                <mat-option *ngFor="let option of kunderDD" [value]="option.id">
+                  {{option.navn}}-({{option.prefiks}})
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          
+            <div class="button-div">
+              <button mat-raised-button type="submit" [disabled]="form.invalid">
+                <mat-icon>save</mat-icon>
+                <div>Lagre</div>
+              </button>
+              <button mat-raised-button (click)="avbryt(form)" type="button">
+                <mat-icon>cancel</mat-icon>
+                <div>Avbryt</div>
+              </button>
+              <button mat-raised-button (click)="slett(form)" type="button">
+                <mat-icon>delete</mat-icon>
+                <div>Slett</div>
+              </button>
+            </div>
+
+
+          </div>
+        </form>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+
+
+  <mat-card class="example-card right">
+    <mat-card-header>
+      <mat-card-title>GJESTER</mat-card-title>
+      <mat-card-subtitle>Oversikt over gjester</mat-card-subtitle>
+      <span class="align_to_right"></span>
+      <button mat-button style='color: #777;' (click)="leggTilNy()">Legg til ny gjest
+        <mat-icon>person_add</mat-icon>
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="example-container mat-elevation-z8">
+        <div class="example-header">
+          <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+          </mat-form-field>
+        </div>
+        <mat-table #table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="navn">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Navn </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element?.navn}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="kunde" matSort>
+              <mat-header-cell *matHeaderCellDef mat-sort-header> Kunde </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element?.kundenavn}} </mat-cell>
+            </ng-container>
+
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="highlight" (click)=aapneElement(row)>
+
+          </mat-row>
+        </mat-table>
+
+        <mat-paginator #paginator [pageSize]="40" [pageSizeOptions]="[5, 10, 20]">
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</div>

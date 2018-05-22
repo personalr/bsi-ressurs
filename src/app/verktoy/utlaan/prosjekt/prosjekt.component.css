@@ -1,0 +1,52 @@
+.cellevidde_knapp,
+.cellevidde_knapp_header {
+  flex: 0 0 15%;
+}
+
+
+.cellevidde_idnr,
+.cellevidde_idnr_header {
+  flex: 0 0 15%;
+}
+
+
+
+.align_to_right{
+  flex: 1 1 auto;
+}
+
+.highlight{
+  background: rgb(233, 243, 234); /* green */
+}
+
+ 
+.highlight:hover{
+  background: rgb(163, 168, 163); /* green */
+  cursor: pointer;
+}
+mat-cell { font-size: 0.9em;  } 
+
+
+
+
+
+
+.liten-knapp:hover{
+  background: none;
+  color: #9c8181;
+  transition: 0.30s;
+  cursor: pointer;
+}
+
+.liten-knapp{
+
+    min-height: 15px !important;
+    min-width: 3px !important;
+    font-size: 5px !important;
+    line-height: 6px !important;
+  }
+  
+.align_to_right{
+  flex: 1 1 auto;
+}
+

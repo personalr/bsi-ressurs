@@ -1,0 +1,9 @@
+<div style="padding: 10px" class="mat-elevation-z8">
+    <button mat-button type="button" style='color: rgb(65, 63, 63);' (click)="leggTilElement()" class="mat-elevation-z8">Legg til erfaring
+      <mat-icon>add_box</mat-icon>
+    </button>
+  </div>
+  <mat-card *ngFor="let element of kandidat?.cv_poster;" class="mat-elevation-z24" style="margin: 5px; border: solid #bbb"
+    [style.display]="vise(element)">
+    <app-cv-erfaring [objekt]="element" (cvEndring)="cvEndring($event)" class="mat-elevation-z5"></app-cv-erfaring>
+  </mat-card>

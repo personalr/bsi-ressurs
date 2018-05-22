@@ -1,0 +1,14 @@
+.card-style{
+    width:90vw;
+    margin:auto;
+    color: #777;
+}
+
+.image-card-style{
+    width:30vw;
+    padding:0 0 1vw 0;
+    
+}
+.card-content-style{
+    padding:6vw 0 0 0;
+}

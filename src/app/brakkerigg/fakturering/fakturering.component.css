@@ -1,0 +1,35 @@
+mat-cell { font-size: 0.9em;  } 
+.container{
+  display: flex;
+  width: 100%;
+}
+
+.left{
+  width: 20%;
+}
+
+.middle{
+  width: 20%;
+
+}
+
+.right{
+  width: 40%;
+}
+
+.liten-knapp{
+  min-height: 30px !important;
+  min-width: 38px !important;
+  font-size: 10px !important;
+  line-height: 10px; 
+  padding: 0; margin:0;
+/*  background: #91f0d6;   green */   
+  
+}
+     
+mat-grid-tile:hover{
+  cursor: pointer;
+  background: rgb(207, 212, 212) !important; /* green */   
+}
+
+

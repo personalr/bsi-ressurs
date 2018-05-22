@@ -1,0 +1,55 @@
+<!--
+<a [href]="fileUrl" download="file.txt">DownloadFile</a>
+
+<a [href]="imagePdf" download="file.pdf">Optimist</a>
+
+   <a [attr.href]="imagePdf" target="_blank">src.pdf</a> 
+
+   <embed [attr.src]="imagePdf" type="application/pdf" width="100%" height="600px" page="1"  />
+-->
+
+<table>
+  <tr>
+    <td style="width:70%">
+    </td>
+    <td align="center">
+      <label for="pdf{{randomid}}" class="uploadBtn33Label">
+        <mat-icon>{{tekst}}</mat-icon>
+      </label>
+      <div> {{undertekst}}</div>
+      <input type="file" (change)="onFileChange1($event)" id="pdf{{randomid}}" style="display: none" accept=".pdf" />
+    </td>
+    <td (click)="slett()" *ngIf="objekt.image_id" align="center" style="padding: 0 20px">
+      <label class="uploadBtn33Label">
+        <mat-icon>delete</mat-icon>
+      </label>
+      <div>Slett</div>
+    </td>
+  </tr>
+</table>
+
+
+
+<img src="./assets/img/favicon.svg" style="height:350px;" *ngIf="!objekt.image_id">
+
+
+<!--
+
+<object [attr.data]="imagePdf" 
+width="100%" height="100%"></object>
+
+
+
+
+<object [attr.data]="sanitizer.bypassSecurityTrustResourceUrl(imagePdf)"  style="width:100%; height:800px" *ngIf="objekt.image_id">
+
+
+-->
+
+<object [attr.data]="imagePdf" type="application/pdf" style="width:100%; height:800px" *ngIf="objekt.image_id">
+
+  <a [attr.href]="imagePdf">test.pdf</a>
+
+
+</object>
+

@@ -1,0 +1,32 @@
+<!--
+<h4>
+  To do:
+  <ol>
+    <li>Slett felter i db som ikke hører til brakkerigg</li>
+    <li>Må ikke få lagre leie med rig_gjest_id = NULL</li>
+  </ol>
+</h4>
+-->
+
+<mat-tab-group (selectedTabChange)="onOpen($event)">
+  <mat-tab label="Utleiekalender">
+    <app-utleiekalender  *ngIf="utleiekalender"></app-utleiekalender>
+  </mat-tab>
+
+  <mat-tab label="Brakker" *ngIf="lister.harRolle('brakkerigg-rediger')">
+    <app-brakker *ngIf="brakker"></app-brakker>
+  </mat-tab>
+
+  <mat-tab label="Fakturering" *ngIf="lister.harRolle('brakkerigg-rediger')">
+    <app-fakturering *ngIf="fakturering"></app-fakturering>
+  </mat-tab>
+
+  <mat-tab label="Kunder" *ngIf="lister.harRolle('brakkerigg-rediger')">
+    <app-kunder *ngIf="kunder"></app-kunder>
+  </mat-tab>
+
+  <mat-tab label="Gjester" *ngIf="lister.harRolle('brakkerigg-rediger')">
+    <app-gjester *ngIf="gjester"></app-gjester>
+  </mat-tab>
+
+</mat-tab-group>

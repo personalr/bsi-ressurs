@@ -1,0 +1,165 @@
+.mff{
+  padding: 0 3% !important;
+  width:90% !important;
+}
+
+table{
+  width:100%;
+
+}
+
+table tr td{
+/*border: solid black;*/
+}
+
+
+.liten-knapp:hover{
+  background: none;
+  color: #9c8181;
+  transition: 0.30s;
+  cursor: pointer;
+}
+
+.liten-knapp{
+
+    min-height: 15px !important;
+    min-width: 3px !important;
+    font-size: 5px !important;
+    line-height: 6px !important;
+  }
+
+
+.utleid{
+  background: rgb(255, 42, 42); 
+}
+
+.defekt{
+  background: rgb(2, 58, 143); 
+  color: #ffffff !important;;
+}
+
+
+
+.utleid:hover{
+
+  background: rgb(163, 168, 163); 
+  cursor: pointer;
+}
+
+.defekt:hover{
+  background: rgb(163, 168, 163); 
+  cursor: pointer;
+}
+
+.makulert:hover{
+  background: rgb(163, 168, 163); 
+  cursor: pointer;
+}
+
+
+
+
+.ledig{
+  background: rgb(233, 243, 234); 
+}
+
+.ledig:hover{
+  background: rgb(163, 168, 163); 
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+mat-cell { font-size: 0.9em;  } 
+
+
+.status{
+    flex: 0 0 40px;
+  /*  border: solid rgb(236, 233, 37);*/
+ }
+
+ .id{
+    flex: 0 0 50px;
+  /*  border: solid rgb(62, 21, 109);*/
+ }
+
+ .plassering{
+    flex: 0 0 40px;
+    text-align: center;
+  /*  border: solid red;*/
+ }
+
+
+.container{
+    display: flex;
+    width: 100%;
+  }
+
+  .left{
+    width: 40%;
+  }
+
+  .right{
+    width: 60%;
+  }
+
+
+  .left_utlaan{
+    width: 50%;
+   
+  }
+
+  .right_utlaan{
+    width: 50%;
+   
+  }
+
+
+
+  .example-card {
+    /*  width: 600px;*/
+    }
+    
+
+    .align_to_right{
+        flex: 1 1 auto;
+    }
+
+
+    
+    .container1 {
+        display: flex;
+        flex-direction: column;
+        min-width: 300px;
+      }
+
+
+
+      .example-header {
+        min-height: 64px;
+        padding: 8px 24px 0;
+      }
+
+
+
+      .example-container2 {
+        display: flex;
+        flex-direction: column;
+        padding:10%;
+    
+      }
+
+
+
+      .highlight{
+        background: rgb(233, 243, 234); 
+      }
+    
+      .highlight:hover{
+        background: rgb(163, 168, 163); 
+        cursor: pointer;
+      }
