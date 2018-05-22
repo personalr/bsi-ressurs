@@ -1,0 +1,21 @@
+.align_to_right{
+    flex: 1 1 auto;
+}
+  .mat-toolbar{
+    background-color: #e0e0e0; 
+  }
+
+  .menu-btn{
+      padding: 0 2vw 0 2vw;
+      margin: 0 2vw 0 2vw;
+  }
+
+  .card-style{
+    height: 30vw;
+    width: auto;
+    margin:auto;
+}
+
+.image-card-style{
+    height: 40px;
+}

@@ -1,20 +1,54 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{title}}!
-  </h1>
-  <img width="300" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<mat-toolbar color="primary" style='color: #777;' *ngIf="!authService.isAuthenticated()">  
+  <div>
+    <img md-card-image class="image-card-style" src= "./assets/img/BSI-OFFSHORE-LOGO-VEKTOR-mob-header.svg">
+  </div>
+
+  <span class="align_to_right"></span>
+  <button mat-button [routerLink]="['signin']" ><mat-icon>account_circle</mat-icon>Logg inn</button>
+ 
+</mat-toolbar>
+
+<mat-toolbar color="primary" style='color: #777;' *ngIf="authService.isAuthenticated()">  
+    
+      <div>
+        <img md-card-image class="image-card-style" src= "./assets/img/BSI-OFFSHORE-LOGO-VEKTOR-mob-header.svg">
+      </div>
+    
+      
+      
+      <button *ngIf="lister.harRolle('brukere')"   mat-button [routerLink]="['brukere']" class="menu-btn">BRUKERE</button>
+      <button *ngIf="lister.harRolle('verktøy')" mat-button [routerLink]="['verktoy']" class="menu-btn">VERKTØY</button> 
+    <!--  <button  mat-button [routerLink]="['verktoy']" class="menu-btn">VERKTØY</button> -->
+
+      <button *ngIf="lister.harRolle('brakkerigg')" mat-button [routerLink]="['brakkerigg']" class="menu-btn">BRAKKERIGG</button>
+
+      <!--
+      <button *ngIf="lister.harRolle('verneutstyr')" mat-button [routerLink]="['verneutstyr']" class="menu-btn">VERNEUTSTUR</button>
+      -->
+      <!--
+      <button *ngIf="lister.harRolle('arbeidstøy')" mat-button [routerLink]="['arbeidstoy']" class="menu-btn">ARBEIDSTØY/PPE</button>
+      -->
+      
+      <button *ngIf="lister.harRolle('kandidat')" mat-button [routerLink]="['kandidater']" class="menu-btn">KANDIDATER (CV)</button>
+     
+      <button *ngIf="lister.harRolle('stoffkartotek')" mat-button [routerLink]="['stoffkartotek']" class="menu-btn">STOFFKARTOTEK</button>
+    
+
+      <span class="align_to_right"></span>
+
+      <button mat-button (click)="authService.logout()"  >  <mat-icon>account_circle</mat-icon>Logg ut</button>  
+     
+      <div *ngIf="lister.harRolle('roller')">
+        <!--  <button  mat-button [routerLink]="['image']" class="menu-btn">IMAGE</button>-->
+          <button *ngIf="lister.harRolle('roller')"   mat-button [routerLink]="['roller']" class="menu-btn">ROLLER</button>
+      </div>
+    </mat-toolbar>
+    
+        
+       
+       
+
+
+    
+<router-outlet></router-outlet>
 
