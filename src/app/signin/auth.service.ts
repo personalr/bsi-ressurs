@@ -9,7 +9,7 @@ import { Headers, Response, RequestOptions, Http, ResponseContentType } from '@a
 // import 'rxjs/add/operator/map';
 
 // tslint:disable-next-line:import-blacklist
-//import { Observable } from 'rxjs/Rx';
+// import { Observable } from 'rxjs/Rx';
 import { Observable } from 'rxjs/Observable'
 import { Subject } from 'rxjs/Subject';
 import { Observer } from 'rxjs/Observer';
