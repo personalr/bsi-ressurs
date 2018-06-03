@@ -76,7 +76,6 @@ import { BrukereComponent } from './brukere/brukere.component';
 import { VerktoyComponent } from './verktoy/verktoy.component';
 import { BrakkeriggComponent } from './brakkerigg/brakkerigg.component';
 import { VerneutsyrComponent } from './verneutsyr/verneutsyr.component';
-import { ArbeidstoyComponent } from './arbeidstoy/arbeidstoy.component';
 import { RollerComponent } from './roller/roller.component';
 import { UtlaanComponent } from './verktoy/utlaan/utlaan.component';
 import { InnleveringComponent } from './verktoy/innlevering/innlevering.component';
@@ -117,7 +116,6 @@ import { GjestevelgerComponent } from './brakkerigg/gjestevelger/gjestevelger.co
     VerktoyComponent,
     BrakkeriggComponent,
     VerneutsyrComponent,
-    ArbeidstoyComponent,
     RollerComponent,
     UtlaanComponent,
     InnleveringComponent,

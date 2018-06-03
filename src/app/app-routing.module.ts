@@ -11,7 +11,6 @@ import { SigninComponent } from './signin/signin.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { BrakkeriggComponent } from './brakkerigg/brakkerigg.component';
-import { ArbeidstoyComponent } from './arbeidstoy/arbeidstoy.component';
 
 
 
@@ -22,7 +21,6 @@ const appRoutes: Routes = [
   { path: 'signin', component: SigninComponent },
   { path: 'brakkerigg', component: BrakkeriggComponent },
   { path: 'verneutstyr', component: VerneutsyrComponent },
-  { path: 'arbeidstoy', component: ArbeidstoyComponent },
   { path: 'verktoy', component: VerktoyComponent },
   { path: 'brukere', component: BrukereComponent },
   { path: 'roller', component: RollerComponent },
