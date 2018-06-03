@@ -25,7 +25,7 @@ export class Lister {
   ];
 
   public admin = [{ 'id': true, 'name': 'Ja' }, { 'id': false, 'name': 'Nei' }];
-  public reqstring = 'https://rig.rj-web.no/public/';
+  public reqstring = 'https://test.rj-web.no/public/';
 
   public rengjort = [
     { display: 'Ja' },

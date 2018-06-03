@@ -54,7 +54,9 @@ export class CvUtdanningComponent implements OnInit {
     if (e.trim().length === 0) {
       return true;
     }
-    return /^\d{2}\-\d{2}\-\d{4}/.test(e);
+     return /^\d{2}\-\d{2}\-\d{4}/.test(e);
+    // return true; // /^\d{2}\-\d{2}\-\d{4}/.test(e);
+
   }
 
   updateStyle(bol) {

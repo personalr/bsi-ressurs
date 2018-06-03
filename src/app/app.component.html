@@ -1,4 +1,7 @@
+<!--
 <mat-toolbar color="primary" style='color: #777;' *ngIf="!authService.isAuthenticated()">  
+ 
+
   <div>
     <img md-card-image class="image-card-style" src= "./assets/img/BSI-OFFSHORE-LOGO-VEKTOR-mob-header.svg">
   </div>
@@ -8,7 +11,10 @@
  
 </mat-toolbar>
 
+
 <mat-toolbar color="primary" style='color: #777;' *ngIf="authService.isAuthenticated()">  
+-->
+  <mat-toolbar color="primary" style='color: #777;'>  
     
       <div>
         <img md-card-image class="image-card-style" src= "./assets/img/BSI-OFFSHORE-LOGO-VEKTOR-mob-header.svg">
@@ -29,10 +35,11 @@
       <button *ngIf="lister.harRolle('arbeidstøy')" mat-button [routerLink]="['arbeidstoy']" class="menu-btn">ARBEIDSTØY/PPE</button>
       -->
       
-      <button *ngIf="lister.harRolle('kandidat')" mat-button [routerLink]="['kandidater']" class="menu-btn">KANDIDATER (CV)</button>
-     
+      <button 
+      mat-button [routerLink]="['kandidater']" class="menu-btn">KANDIDATER (CV)</button>
+     <!--
       <button *ngIf="lister.harRolle('stoffkartotek')" mat-button [routerLink]="['stoffkartotek']" class="menu-btn">STOFFKARTOTEK</button>
-    
+     -->
 
       <span class="align_to_right"></span>
 
@@ -45,10 +52,6 @@
     </mat-toolbar>
     
         
-       
-       
-
-
-    
+      
 <router-outlet></router-outlet>
 

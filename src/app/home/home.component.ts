@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
     private authService: AuthService, private lister: Lister, private http: Http ) { }
 
   ngOnInit() {
+    /*
     this.authService.getToken();
     this.getChangePw().subscribe(
       resp => {
@@ -30,6 +31,7 @@ export class HomeComponent implements OnInit {
           this.router.navigate(['reset_passord']);
         }
       });
+      */
   }
 
 

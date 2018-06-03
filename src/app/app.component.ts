@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
     if (!this.authService.isAuthenticated()) {
       if (this.url.path().indexOf('/verify') > -1) {
       }else{
-        this.router.navigate(['/signin']);
+        this.router.navigate(['/kandidater']);
       }
     }
   }
